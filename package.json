@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "posts:dev": "vitepress dev posts",
+    "posts:build": "vitepress build posts",
+    "posts:preview": "vitepress preview posts"
+  },
+  "devDependencies": {
+    "vitepress": "latest"
+  }
+}
