@@ -48,7 +48,7 @@ export default createContentLoader(['posts/**/*.md'], {
         title: frontmatter.title,
         url,
         icon: {
-          src: (url + "logo.jpg") ?? '../not_found.jpg',
+          src: url ? (url + "logo.jpg") : '/not_found.jpg',
           width: "100%",
           height: "100%"
         },

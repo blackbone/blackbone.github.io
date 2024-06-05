@@ -3,8 +3,8 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   lang: 'ru-RU',
-  title: "Mess Dev",
-  description: "Mess development from sick dude",
+  title: "Упрт Рзрбтк",
+  description: "Упртя рзрбтка от упртг рзрбтчк.\nТут больше кринжи, чем полезной информации, так что - зло пожаловать.",
   head: [
     ['link', { rel: 'icon', href: 'favicon.ico' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
@@ -18,7 +18,7 @@ export default defineConfig({
 
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    logo: '/logo.jpg',
+    logo: '/logo-dark.png',
     // social links
     socialLinks: [
       { icon: 'github', link: 'https://github.com/blackbone' }
@@ -35,21 +35,12 @@ export default defineConfig({
     root:  {
       label: 'Русский',
       lang: 'ru-RU',
-      dir: 'ru',
       themeConfig: {
         nav: [
           { text: 'Домой', link: '/' },
           { text: 'Все посты', link: '/posts' },
           { text: 'RSS', link: '/rss' },
         ],
-        // sidebar: [
-        //   {
-        //     items: [
-        //       { text: 'Все посты', link: '/posts' },
-        //       { text: 'RSS', link: '/rss' }
-        //     ]
-        //   }
-        // ],
       }
     }
   }
