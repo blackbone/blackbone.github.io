@@ -1,10 +1,21 @@
 {
-  "scripts": {
-    "posts:dev": "vitepress dev posts",
-    "posts:build": "vitepress build posts",
-    "posts:preview": "vitepress preview posts"
-  },
+  "name": "blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
   "devDependencies": {
-    "vitepress": "latest"
+    "@tailwindcss/typography": "^0.5.13",
+    "@types/markdown-it": "^14.1.1",
+    "@types/node": "^20.14.1",
+    "feed": "^4.2.2",
+    "gray-matter": "^4.0.3",
+    "tailwindcss": "^3.4.3",
+    "vitepress": "^1.2.3",
+    "vue": "^3.4.21"
+  },
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
   }
 }

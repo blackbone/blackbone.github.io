@@ -1,25 +1,16 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
-layout: home
-
-hero:
-  name: "Messy Dev"
-  text: "Messy development from mentally ill developer"
-  # tagline: My great project tagline
-  # actions:
-  #   - theme: brand
-  #     text: Markdown Examples
-  #     link: /markdown-examples
-  #   - theme: alt
-  #     text: API Examples
-  #     link: /api-examples
-
-features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+layout: doc
+title: Все посты
+lang: ru-RU
+next: false
+prev: false
 ---
+
+<script setup lang="ts">
+import { useData } from 'vitepress'
+</script>
+
+# {{ $frontmatter.title }}
+
+
 
