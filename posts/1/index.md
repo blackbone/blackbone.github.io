@@ -1,7 +1,7 @@
 ---
 layout: doc
 title: Статейка о том как я сетаплю SG для юньки.
-date: 2024-04-07
+date: 2024-04-07 01:00:00
 tags:
   - dotnet
   - sourcegenerators

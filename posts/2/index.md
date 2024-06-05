@@ -1,7 +1,7 @@
 ---
 layout: doc
 title: Как определить что SG в юнити.
-date: 2024-04-07
+date: 2024-04-07 02:00:00
 tags:
   - dotnet
   - sourcegenerators
@@ -9,8 +9,8 @@ prev:
   text: 'Статейка о том как я сетаплю SG для юньки.'
   link: '/posts/1'
 next:
-  text: 'Все посты'
-  link: '/posts/'
+  text: 'Additional files в SG для Unity.'
+  link: '/posts/3'
 ---
 # {{ $frontmatter.title }}
 
