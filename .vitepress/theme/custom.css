@@ -2,6 +2,7 @@
     --vp-c-brand-1: #507dae;
     --vp-c-brand-2: #626262;
 
+
     /* logo colors */ 
     --vp-home-hero-name-color: transparent;
     --vp-home-hero-name-background: -webkit-linear-gradient(120deg, var(--vp-c-brand-1) 30%, var(--vp-c-brand-2));
@@ -9,15 +10,16 @@
     --vp-home-hero-image-filter: blur(88px);
 
     /* fonts */
-    --vp-font-family-base: 'Comfortaa', 'Inter', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --vp-font-family-base: 'Noto Sans', 'Inter', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --vp-font-family-mono: 'Source Code Pro', monospace;
     font-optical-sizing: auto;
 
 
-    --vp-c-bg: #ebf2fe;
+    --vp-c-bg: #dfe5ef;
     --vp-c-bg-alt: #e4efff;
     --vp-c-bg-elv: #ebf2fe;
-    --vp-c-bg-soft: #e4efff;
+    --vp-c-bg-soft: #d0ddef;
+    --vp-c-bg-soft-1: #b4c0d1;
 }
   
 .dark {
@@ -28,4 +30,5 @@
     --vp-c-bg-alt: #161618;
     --vp-c-bg-elv: #202127;
     --vp-c-bg-soft: #202127;
+    --vp-c-bg-soft-1: #303137;
 }

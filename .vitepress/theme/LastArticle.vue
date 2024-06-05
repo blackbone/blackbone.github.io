@@ -64,7 +64,7 @@ defineProps<{
 <style scoped>
 .LastArticle {
   display: block;
-  border: 1px solid var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-bg-soft-1);
   border-radius: 12px;
   height: 100%;
   background-color: var(--vp-c-bg-soft);
