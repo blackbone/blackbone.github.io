@@ -114,4 +114,3 @@ ExampleGeneratedCode.SayHello();
 ![1](1.png)
 
 Cheers, дальше будет больше.
-```
