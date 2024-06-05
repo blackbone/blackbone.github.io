@@ -40,7 +40,6 @@ const exludedPaths = [
 export default createContentLoader(['posts/**/*.md'], {
   excerpt: true,
   transform(raw): PostsData {
-    console.log(raw)
     var posts = raw
       .filter((p) => {
         return exludedPaths.indexOf(p.url) == -1})
