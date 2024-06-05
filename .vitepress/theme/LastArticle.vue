@@ -136,5 +136,6 @@ defineProps<{
   display: flex;
   align-items: center;
   height: 100%;
+  flex-wrap: wrap;
 }
 </style>
