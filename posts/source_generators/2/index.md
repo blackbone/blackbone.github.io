@@ -7,10 +7,10 @@ tags:
   - sourcegenerators
 prev:
   text: 'Статейка о том как я сетаплю SG для юньки.'
-  link: '/posts/1'
+  link: '/posts/source_generators/1'
 next:
   text: 'Additional files в SG для Unity.'
-  link: '/posts/3'
+  link: '/posts/source_generators/3'
 ---
 # {{ $frontmatter.title }}
 

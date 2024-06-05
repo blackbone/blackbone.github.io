@@ -6,11 +6,11 @@ tags:
   - dotnet
   - sourcegenerators
 prev:
-  text: 'Все посты'
-  link: '/posts/'
+  text: 'Все посты по сорс генераторам'
+  link: '/posts/source_generators/'
 next:
   text: 'Как определить что SG в юнити.'
-  link: '/posts/2'
+  link: '/posts/source_generators/2'
 ---
 # {{ $frontmatter.title }}
 

@@ -34,7 +34,8 @@ declare const data: PostsData
 export { data }
 
 const exludedPaths = [
-    "/posts/"
+    "/posts/",
+    "/posts/source_generators/"
 ]
 
 export default createContentLoader(['posts/**/*.md'], {
