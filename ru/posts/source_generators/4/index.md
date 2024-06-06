@@ -1,7 +1,7 @@
 ---
 layout: doc
 lang: ru-RU
-title: SG фабрика.
+title: SG фабрика
 date: 2024-05-12 04:00:00
 tags:
   - dotnet
