@@ -10,7 +10,7 @@
     --vp-home-hero-image-filter: blur(88px);
 
     /* fonts */
-    --vp-font-family-base: 'Noto Sans', 'Inter', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --vp-font-family-base: 'Ubuntu Mono', 'Inter', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --vp-font-family-mono: 'Source Code Pro', monospace;
     font-optical-sizing: auto;
 
