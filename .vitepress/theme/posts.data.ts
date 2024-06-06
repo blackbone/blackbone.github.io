@@ -26,7 +26,7 @@ const exludedPaths = [
     "/posts/source_generators/"
 ]
 
-export default createContentLoader(['posts/**/*.md'], {
+export default createContentLoader(['posts/**/*.md', 'ru/posts/**/*.md'], {
   excerpt: true,
   transform(raw): PostsData {
     var posts = raw
@@ -36,7 +36,7 @@ export default createContentLoader(['posts/**/*.md'], {
         title: frontmatter.title,
         url,
         icon: {
-          src: url ? (url + "logo.jpg") : '/not_found.jpg',
+          src: url ? (url.replace('/ru', '') + "logo.jpg") : '/not_found.jpg',
           width: "100%",
           height: "100%"
         },
@@ -49,19 +49,18 @@ export default createContentLoader(['posts/**/*.md'], {
       var tags = getAllTags(posts)
       let result: PostsData = {
         posts: posts,
-        tags: tags,
-        filter: (filter?:string[], limit?:number) => getFilteredPosts(posts, filter, limit),
+        tags: tags
       }
 
       return result;
   }
 })
 
-function formatDate(raw: string): Post['date'] {
+function formatDate(raw: string, lang?: string): Post['date'] {
   const date = new Date(raw)
   return {
     time: +date,
-    string: date.toLocaleDateString('ru-RU', {
+    string: date.toLocaleDateString(lang != undefined ? lang : 'en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'

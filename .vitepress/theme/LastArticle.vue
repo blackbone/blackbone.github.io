@@ -17,6 +17,7 @@ defineProps<{
   tags?: string[]
   date: Post['date']
 }>()
+
 </script>
 
 <template>

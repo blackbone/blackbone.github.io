@@ -1,6 +1,7 @@
 ---
 layout: doc
-title: SG в юнити
+title: Source Generators in Unity
+lang: en-US
 next: false
 prev: Все посты
 ---
@@ -11,4 +12,4 @@ import { useData } from 'vitepress'
 
 # {{ $frontmatter.title }}
 
-Немножко о том как заставить код писать код в контексте всеми любимого багованного движка.
+A bit about how to make code write code in the context of everyone's favorite buggy engine.

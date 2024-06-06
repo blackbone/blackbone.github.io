@@ -1,87 +1,88 @@
 ---
 layout: doc
-title: SG фабрика.
+lang: en-US
+title: SG Factory
 date: 2024-05-12 04:00:00
 tags:
   - dotnet
   - sourcegenerators
 prev:
-  text: 'Additional files в SG для Unity.'
+  text: 'Additional files in SG for Unity.'
   link: '/posts/source_generators/3'
 next:
-  text: 'Все посты по сорс генераторам'
+  text: 'All posts on source generators'
   link: '/posts/source_generators/'
 ---
 # {{ $frontmatter.title }}
 
-## Проблема:
+## Problem:
 
-Представим что у нас есть абстрактный класс A и его наследники А1, А2, А3 и т.д. и мы хотим оперировать наследниками как инстансами базы, при этом инстанциировать на основе каких-то мета-данных однозначно представляющих какой именно тип инстанса нам нужен, например:
+Imagine we have an abstract class A and its descendants A1, A2, A3, etc., and we want to operate with the descendants as instances of the base, while instantiating based on some metadata unambiguously representing which specific type of instance we need, for example:
 
 ```csharp
 IFruit apple = Factory<IFruit>.Create("apple");
 ```
 
-или так:
+or like this:
 
 ```csharp
 IFruit orange = Factory<IFruit>.Create(Fruit.Orange);
 ```
 
-или даже так:
+or even like this:
 
 ```csharp
 IFruit cherry = Factory.Create(Cherry.ID);
 ```
 
-Главный юз кейс - создание компонентов из какого-то предзаготовленного конфига в процессе формирования сущностей (детальнее в отдельной статье).
+The main use case is creating components from some pre-prepared config in the process of forming entities (more details in a separate article).
 
-## Ограничения:
+## Constraints:
 
-Главное ограничение - это то, что реализации типов используемых в фабрике могут распологаться в разных сборках, при этом необходимо корректно их создавать из любого места где доступна фабрика и базовый тип.
+The main constraint is that the implementations of types used in the factory can be located in different assemblies, while it is necessary to correctly create them from anywhere the factory and base type are available.
 
-Если мы представим что наша фабрика находится в сборке Factory.dll, базовый тип IFruit находится в сборке Fruits.Base.dll, а все реализации находятся в других сборках, таких как Fruits.Common.dll, Fruits.Exotic.dll и тд. При этом пользовательский код находится в сборке UserCode.dll как на рисунке ниже.
+If we imagine that our factory is located in the Factory.dll assembly, the base type IFruit is in the Fruits.Base.dll assembly, and all implementations are in other assemblies, such as Fruits.Common.dll, Fruits.Exotic.dll, etc. Meanwhile, the user code is in the UserCode.dll assembly as shown in the diagram below.
 
-Из пользовательского кода мы хотим создавать инстансы вишен и всяких апельсинов при этом явно не ссылаясь на сборки, в которых они объявлены, т.к. мы не очень заинтересованы в деталях реализации (чисто например).
+From the user code, we want to create instances of cherries and various oranges without explicitly referencing the assemblies in which they are declared, as we are not very interested in the implementation details (purely as an example).
 
-Главным вопросом здесь является - где именно мы объявим и зарегистируем фабричные методы (или делегаты) которые непосредственно будут создавать инстансы интересующих нас типов? Ответ простой: там же где они объявлены, такой подход позволит создавать инстансы даже интернал типов не раскрывая детали реализации и не плодя ссылки между сборками.
+The main question here is where exactly we will declare and register the factory methods (or delegates) that will directly create instances of the types we are interested in? The simple answer: where they are declared, such an approach will allow creating instances even of internal types without revealing the implementation details and without creating references between assemblies.
 
-Псевдокод фабричного метода будет иметь следующий вид:
+The pseudocode of the factory method will look like this:
 
 ```csharp
 public static TValue Create<TValue, TKey>(in TKey key)
 {
    switch(key) {
-      // ... свич чисто для демонстрации того, что тут происходит селект
+      // ... switch just to demonstrate the selection process
    } 
 }
 ```
 
-Исходя из кода выше - свич не прокатит, т.к. с дженериками он работать не будет, да и, как показала практика - на большом количестве элементов он довольно медленный.
+Based on the code above, the switch won't work, as it won't operate with generics, and as practice has shown, it is quite slow with a large number of elements.
 
-Вторым ограничением является регистрация типов - каким-то образом надо явно идентифицировать к какой именно фабрике относится тип-наследник и по какому именно ключу инстанс данного типа будет создаваться. Для этого будем использовать аттрибут (можно обойтись и без аттрибута, но я предпочитаю явно видеть по коду где и что используется). Аттрибут тоже должен быть где-то объявлен и объявлен он будет в сборке Factory.dll, что изменит граф зависимостей следующим образом:
+The second constraint is the registration of types - somehow it is necessary to explicitly identify which factory the descendant type belongs to and by what key the instance of this type will be created. For this, we will use an attribute (it is possible to do without the attribute, but I prefer to explicitly see where and what is used in the code). The attribute should also be declared somewhere and it will be declared in the Factory.dll assembly, which will change the dependency graph as follows:
 
 ![1](1.png)
 
-У дочерних сборок добавляется ссылка на сборку Factory.dll, но это не приводит ни к циклическим зависимостям ни к ограничениям. К тому же, исходя из особенностей работы source generators в unity - позволит подвязать сорс генераторы ко всем сборкам, типы которых используются в фабрике - это и будем абъюзить.
+The child assemblies add a reference to the Factory.dll assembly, but this does not lead to cyclic dependencies or restrictions. Moreover, based on the features of how source generators work in Unity, it will allow tying source generators to all assemblies whose types are used in the factory - this is what we will abuse.
 
-## План:
+## Plan:
 
-Создаем пакет со сборкой в которой будет наш фабричный класс и аттрибут.
+Create a package with the assembly that will contain our factory class and attribute.
 
-Создаем сорс генератор и линкуем его к этой сборке.
+Create a source generator and link it to this assembly.
 
-Сорс генератор шерстит все типы с нашим аттрибутом и генерирует регистрирующий код, который в последствии используется фабрикой.
+The source generator will scan all types with our attribute and generate registration code, which will subsequently be used by the factory.
 
-## Реализация:
+## Implementation:
 
-Создаем сорс генератор как описано в [этой статье](../1/index.md). Обзовем это всё Factories*.
+Create a source generator as described in [this article](../1/index.md). Let's call all this Factories*.
 
-Создадим немножко тестовых типов от которых будем плясать:
+Let's create some test types from which we will proceed:
 
 ![2](2.png)
 
-Ну и сам тестовый юзер код:
+And the test user code itself:
 
 ```csharp
 namespace UserCode
@@ -123,9 +124,9 @@ namespace UserCode
 }
 ```
 
-Явное указание типов выглядит не очень красиво, позже можно подумать что с этим делать, на данном этапе главное - что апишка выполняет возложенную функцию.
+Explicit type specification doesn't look very pretty, later we can think about what to do with it, at this stage the main thing is that the API performs its function.
 
-Теперь аттрибут:
+Now the attribute:
 
 ```csharp
 namespace Factories
@@ -145,24 +146,24 @@ namespace Factories
 }
 ```
 
-Мы не можем использовать дженерики в аттрибутах - поэтому будем использовать object. К тому же надо явно указывать базовый тип для однозначной идентификации фабрики (такой подход покроет так же кейсы когда инстанс одного типа можно создавать из разных фабрик по разным ключам).
+We cannot use generics in attributes - therefore, we will use object. Moreover, it is necessary to explicitly specify the base type for unambiguous identification of the factory (this approach will also cover cases when an instance of one type can be created from different factories by different keys).
 
-На примере яблока использование выглядит следующим образом:
+Using the example of an apple, the usage looks as follows:
 
 ```csharp
 [Factory(typeof(IFruit), "apple")]
 public class Apple : IFruit { }
 ```
 
-Аналогично расставляем аттрибуты на всем тестовом коде.
-Для овощей вместо строки будет использоваться инт:
+Similarly, we place attributes on all test code.
+For vegetables, an integer will be used instead of a string:
 
 ```csharp
 [Factory(typeof(IVegetable), 101)]
 public class Cucumber : IVegetable { }
 ```
 
-Сама фабрика реализуется довольно просто - через словарь с делегатами (в который уже и будем регистрировать фабричные методы):
+The factory itself is implemented quite simply - through a dictionary with delegates (in which we will register factory methods):
 
 ```csharp
 namespace Factories
@@ -183,7 +184,7 @@ namespace Factories
         public static void Register(in TKey key, in FactoryDelegate creationDelegate)
         {
             if (!CreationDelegates.TryAdd(key, creationDelegate))
-                throw new InvalidOperationException(message: $"Creation delegate with key \"{key}\" already added");
+                throw new InvalidOperationException(message: $"Creation delegate with key "{key}" already added");
         }
 
         /// <summary>
@@ -195,16 +196,16 @@ namespace Factories
         public static TValue Create(in TKey key)
         {
             if (!CreationDelegates.TryGetValue(key, out var creationDelegate))
-                throw new KeyNotFoundException(message: $"Creation delegate with key \"{key}\" not found");
+                throw new KeyNotFoundException(message: $"Creation delegate with key "{key}" not found");
             return creationDelegate();
         }
     }
 }
 ```
 
-В базовом варианте фабрика довольно простая (и использовать ее можно и в ручную). При необходимости будем расширять.
+In the basic version, the factory is quite simple (and can be used manually). If necessary, we will expand it.
 
-На данном этапе всё готово, кроме самой регистрации типов и даже будет работать если зарегистрировать интересующие нас типы вручную, но так не интересно - нужен сорс генератор. Его и напишем:
+At this stage, everything is ready except for the actual registration of types, and it will even work if we manually register the types we are interested in, but that's not interesting - we need a source generator. Let's write it:
 
 ```csharp
 [Generator]
@@ -270,11 +271,11 @@ public class FactoriesSourceGenerator : ISourceGenerator
             sb.AppendLine();
             sb.AppendLine($"namespace {typeSymbol.ContainingNamespace}");
             sb.AppendLine("{");
-            sb.AppendLine($"\tinternal static class {typeSymbol.Name}Registration");
-            sb.AppendLine("\t{");
-            sb.AppendLine("\t\t[UnityEngine.RuntimeInitializeOnLoadMethod]");
-            sb.AppendLine($"\t\tpublic static void Register() => Factory<{type}, {keyType}>.Register({Format(key, keyType)}, () => new {typeSymbol.Name}());");
-            sb.AppendLine("\t}");
+            sb.AppendLine($"	internal static class {typeSymbol.Name}Registration");
+            sb.AppendLine("	{");
+            sb.AppendLine("		[UnityEngine.RuntimeInitializeOnLoadMethod]");
+            sb.AppendLine($"		public static void Register() => Factory<{type}, {keyType}>.Register({Format(key, keyType)}, () => new {typeSymbol.Name}());");
+            sb.AppendLine("	}");
             sb.AppendLine("}");
             context.AddSource($"{typeSymbol.ContainingNamespace}.{typeSymbol.Name}.g.cs", sb.ToString());
         }
@@ -283,7 +284,7 @@ public class FactoriesSourceGenerator : ISourceGenerator
     private static string Format(object key, ITypeSymbol type)
     {
         // special formatting rules for strings and enums
-        if (type.SpecialType == SpecialType.System_String) return $"\"{key}\"";
+        if (type.SpecialType == SpecialType.System_String) return $""{key}"";
         if (type.TypeKind == TypeKind.Enum) return $"({type}){key}";
         return key.ToString();
     }
@@ -305,17 +306,17 @@ public class FactoriesSourceGenerator : ISourceGenerator
 }
 ```
 
-И результат его работы:
+And the result of its work:
 
 ![3](3.png)
 
-Как видим - фабрика наклепала нам инстансов используя только ключи в пользовательском коде, при этом мы не ссылались на дочерние сборки и не писали бойлерплейт регистрации.
+As we can see, the factory created instances for us using only keys in the user code, while we did not reference child assemblies and did not write boilerplate registration code.
 
-## Заметки:
+## Notes:
 
-1. Можно было бы убрать второй дженерик аргумент и свести сигнаруту вызова фабрики к `Factory<IFruit>.Create("key")`, но это приведет к тому, что ключи придется хранить как object и, соответственно даже при дженерик сигнатуре метода внутри, когда будет происходить обращение к словарю, они будут бокситься. К тому же изоляция фабрик дополнительно по типу ключа уменьшает размер словаря - что положительно сказывается на скорости обращения.
-2. Можно было бы плодить статические заранее типизированные классы, что-то вроде `IFruitFactory`, но сразу же возникает вопрос - а где будет находиться данный класс? В теории можно положить его в сборку с базовым типом и работать через него, регистрацию проводить так же, но есть один простой контраргумент - это размажет логику использования фабрик и я, например, не смогу просто взять и посмотреть все фабрики в проекте, но имеет место быть.
+1. We could remove the second generic argument and reduce the factory call signature to `Factory<IFruit>.Create("key")`, but this would lead to storing keys as objects and, consequently, even with a generic method signature inside, they would be boxed when accessing the dictionary. Moreover, further isolating factories by key type reduces the dictionary size, which positively affects access speed.
+2. We could create static pre-typed classes, something like `IFruitFactory`, but the question immediately arises - where will this class be located? In theory, it can be placed in the assembly with the base type and work through it, registration can be done the same way, but there is one simple counterargument - this will spread the logic of using factories, and I, for example, will not be able to simply take and look at all the factories in the project, but it has its place.
 
-## Конец:
+## End:
 
-Пакет доступен на [github](https://github.com/blackbone/factories). Там же описание как его воткнуть и пользоваться.
+The package is available on [GitHub](https://github.com/blackbone/factories). There is also a description of how to install and use it.

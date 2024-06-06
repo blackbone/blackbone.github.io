@@ -1,84 +1,85 @@
 ---
 layout: doc
-title: Статейка о том как я сетаплю SG для юньки.
+lang: en-US
+title: How I Set Up SG for Unity
 date: 2024-04-07 01:00:00
 tags:
   - dotnet
   - sourcegenerators
 prev:
-  text: 'Все посты по сорс генераторам'
+  text: 'All posts about source generators'
   link: '/posts/source_generators/'
 next:
-  text: 'Как определить что SG в юнити.'
+  text: 'How to determine if SG is in Unity.'
   link: '/posts/source_generators/2'
 ---
 # {{ $frontmatter.title }}
 
-Генераторы в шарпе тема прикольная, но не все умеют их варить и употреблять.
-Меньше слов - больше слов.
+Source generators in C# are pretty cool, but not everyone knows how to use them effectively.
+Less talk - more code.
 
-## База:
+## Basics:
 
-Делать будем пакет состоящий из 3х частей:
+We'll create a package consisting of three parts:
 
-*  Runitme - рантайм код проекта, к этой сборке и всем ее зависимостям будет применяться наш генератор
-*  Editor - по необходимости, но обычно надо
-*  Сам генератор - тут есть два варианта: полный пак и дллка, в данном посте будет второй.
+*  Runtime - the runtime code of the project; our generator will be applied to this assembly and all its dependencies
+*  Editor - if needed, but usually required
+*  The generator itself - there are two options here: a full package or a DLL, we'll cover the second option in this post.
 
-И делать будем пакетом по 2м причинам: во первых - это позволит изолировать зависимости, во вторых - реюзать сам пакет между проектами.
+We're making it a package for two reasons: first, it allows us to isolate dependencies, and second, we can reuse the package between projects.
 
-Готовим все папочки и файлики в папке Packages проекта:
+Prepare all the folders and files in the Packages folder of the project:
 
 ![1](1.png)
 
-По содержимому объяснять не буду - стандартный пакет.
+No need to explain the contents - it's a standard package.
 
-## Генератор:
+## Generator:
 
-Постараемся держать все минималистичным, поэтому будем делать генератор из дллки, но никто не мешает делать из райдеровского темплейта с тестами и настроенным дебаггером.
+We'll keep everything minimalistic, so we'll create the generator from a DLL, but you can also use Rider's template with tests and a configured debugger.
 
-Добавляем сам проект генератора, для этого открываем терминал в папке пакета и пишем:
+Add the generator project by opening a terminal in the package folder and typing:
 
 `dotnet new classlib -n SampleGenerator -o ./src~ -f netstandard2.0`
 
-> **SampleGenerator** это название вашего генератора, лучше именовать как [package-name]Generator.
+> **SampleGenerator** is the name of your generator; it's better to name it as [package-name]Generator.
 
-Это сгенерит проект с дллкой без солюшена. В нашем случае так и надо.
+This will generate a project with a DLL without a solution. In our case, this is what we need.
 
-Если хотите фулл пак - создайте солюшен из темплейта в райдере или студии внутри папки ./src~.
+If you want a full package, create a solution from the template in Rider or Visual Studio inside the ./src~ folder.
 
->  Тильда в конце названия папки сделает ее невидимой для юньки, так что там можно будет шатать как хочешь.
+> The tilde at the end of the folder name will make it invisible to Unity, so you can do whatever you want there.
 
-Теперь нужно модифицировать проект генератора для совместимости с юнити.
+Now we need to modify the generator project for compatibility with Unity.
 
-Открываем файл проекта в vs code:
+Open the project file in VS Code:
 
 `code ./src~/`
 
-И меняем содержимое:
+And change the contents:
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
     
-  <!-- настройки самого проекта, можете шатать как хотите в принципе -->
+  <!-- project settings, feel free to tweak them as needed -->
   <PropertyGroup>
-      <!-- юнити требует именно эту версию -->
+      <!-- Unity requires this specific version -->
       <TargetFramework>netstandard2.0</TargetFramework>
       <Nullable>disable</Nullable>
       <IsPackable>false</IsPackable>
       <LangVersion>latest</LangVersion>
-      <!-- чтобы при билде не геренировалась папка 'netstandard2.0' -->
+      <!-- prevent the 'netstandard2.0' folder from being generated during build -->
       <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
       <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
       <IsRoslynComponent>true</IsRoslynComponent>
   </PropertyGroup>
 
-  <!-- после билда в релизе копируем выхлоп в папку, которую видит юнити -->
+  <!-- copy the output to a folder visible to Unity after building in release -->
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Release' ">
       <Exec Command="cp bin/$(Configuration)/$(ProjectName).dll ../Runtime/Plugins/"/>
   </Target>
 
-  <!-- cобственно сами пакеты которые сделают из dll'ки анализатор -->
+  <!-- packages that turn the DLL into an analyzer -->
   <ItemGroup>
       <PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.1" PrivateAssets="all"/>
       <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" PrivateAssets="all"/>
@@ -87,9 +88,9 @@ next:
 </Project>
 ```
 
->  Для юнити версии младше 2022 - версия пакетов должна быть 3.8.0.
+> For Unity versions earlier than 2022, the package versions should be 3.8.0.
 
-Открываем Class1.cs в проекте и вставляем туда следующий код:
+Open Class1.cs in the project and insert the following code:
 
 ```csharp
 using Microsoft.CodeAnalysis;
@@ -116,30 +117,30 @@ public static class ExampleGeneratedCode
 }
 ```
 
-## Интеграция:
+## Integration:
 
-Теперь надо сделать так чтоб генератор корректно подхватывался юнькой, для этого его нужно сначала собрать (:
+Now we need to make sure the generator is correctly picked up by Unity, for this we need to build it first (:
 
 `dotnet publish -c Release ./src~`
 
-И переключаемся на юньку чтоб она сожрала свежесобранную дллку.
-Нам нужен сгенерированный метафайл т.к. мы будем поставлять его вместе с проектом.
+Switch to Unity so it can load the freshly built DLL.
+We need the generated meta file as we will be supplying it with the project.
 
-Открываем настройки импортера дллки, вырубаем все платформы в т.ч. редактор, вешаем лейбл RoslynAnalyzer - тут все по [юнити гайду](https://docs.unity3d.com/Manual/roslyn-analyzers.html).
+Open the DLL importer settings, disable all platforms including the editor, and add the RoslynAnalyzer label - all according to the [Unity guide](https://docs.unity3d.com/Manual/roslyn-analyzers.html).
 
-## Результат:
+## Result:
 
-Генератор мы настроили и работать он будет на сборке (asmdef), которая лежит у нас в папочке runtime и всех сборках на нее ссылающихся.
+We've set up the generator and it will work on the assembly (asmdef) located in our runtime folder and all assemblies referencing it.
 
-Чтоб триггернуть генерацию:
+To trigger the generation:
 
-1. Создаем любой пустой скрипт в папке Runtime.
-2. Открываем проект в райдере или студии.
-3. Переключаемся на Solution View.
-4. Смотрим что там у нас внутри сборки.
+1. Create any empty script in the Runtime folder.
+2. Open the project in Rider or Visual Studio.
+3. Switch to Solution View.
+4. Check the contents of the assembly.
 
 ![2](2.png)
 
-Voila! Наш сгенерированный код. А если клацнуть плеймод - то можно увидеть написанный дебаг лог.
+Voila! Our generated code. And if you enter play mode, you can see the debug log message.
 
 ![3](2.png)

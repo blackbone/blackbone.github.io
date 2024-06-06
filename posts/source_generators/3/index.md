@@ -1,46 +1,47 @@
 ---
 layout: doc
-title: Additional files в SG для Unity.
+lang: en-US
+title: Additional files in SG for Unity
 date: 2024-04-07 03:00:00
 tags:
   - dotnet
   - sourcegenerators
 prev:
-  text: 'Как определить что SG в юнити.'
-  link: '/posts/2'
+  text: 'How to Determine if SG is in Unity'
+  link: '/posts/source_generators/2'
 next:
-  text: 'SG фабрика.'
+  text: 'SG Factory'
   link: '/posts/source_generators/3'
 ---
 # {{ $frontmatter.title }}
 
-## Нафига?
+## Why?
 
-Юнька это content driven в двигло и очень многие вещи делаются на основе сериализованного контента. Эту особенность можно использовать и в сорс генераторах, например, для генерации кода по сконфигурированным в редакторе файлам.
+Unity is a content-driven engine, and many things are done based on serialized content. This feature can be used in source generators, for example, to generate code from files configured in the editor.
 
-Основа генератора - из предыдущих статей, в качестве примера будем генерировать енам. Погнали.
+The basis of the generator is from previous articles, and as an example, we will generate an enum. Let's go.
 
-## Структура и флоу:
+## Structure and Flow:
 
-Задача - генерировать енам из какого-то сериализованного представления в сорс генераторе как в unity так и в чистом дотнете, это может быть json, бинарь или какой-то кастомный формат.
+The task is to generate an enum from some serialized representation in the source generator both in Unity and pure .NET. This could be JSON, binary, or some custom format.
 
-Для чистоты и понимания контекста енам будем генерировать по следующим правилам:
+For clarity and context understanding, we will generate the enum according to the following rules:
 
-1. Исходник - текстовый файл с расширением .enum
-2. Внутри перечислены значения по аналогии с .ini файлами - ИМЯ=ЗНАЧЕНИЕ.
-3. Неймспейс должен соответствовать рут неймспейсу сборки.
+1. The source is a text file with the extension .enum
+2. Inside, values are listed similarly to .ini files - NAME=VALUE.
+3. The namespace must match the root namespace of the assembly.
 
-Для этих целей идеально подходит механизм Additional Files о котором можно почитать [здесь](https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Using%20Additional%20Files.md).
+For these purposes, the Additional Files mechanism is perfect, which you can read about [here](https://github.com/dotnet/roslyn/blob/main/docs/analyzers/Using%20Additional%20Files.md).
 
-Файлик с нашим будущим енамом обзовем MySuperEnum.enum и наполиним следующим контентом:
+We will name the file with our future enum MySuperEnum.enum and fill it with the following content:
 
 ![1](1.png)
 
-Кстати уже можно начать использовать дотнетовскую SyntaxFactory чтоб не долбаться со стринг билдером и форматированием, так что добавим в юзинги вот такую строчку - она значительно облегчит жизнь:
+By the way, you can start using .NET's SyntaxFactory to avoid struggling with string builders and formatting, so let's add this line to the usings - it will significantly ease the task:
 
 `using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;`
 
-И напишем еще один геренатор:
+And let's write another generator:
 
 ```csharp
 using System.IO;
@@ -57,19 +58,19 @@ public class EnumSourceGenerator : ISourceGenerator
 
     public void Execute(GeneratorExecutionContext context)
     {
-        // бежим по всем аддишнал файлам
+        // iterate over all additional files
         foreach (var additionalFile in context.AdditionalFiles)
         {
-            // проверяем расширение
+            // check the extension
             if (Path.GetExtension(additionalFile.Path) != ".enum") continue;
             
-            // вычитываем контент и подготавливаем переменные
+            // read content and prepare variables
             var values = File.ReadAllLines(additionalFile.Path)
                 .Select(line => line.Split('='))
                 .ToDictionary(line => line[0], line => line.Length > 1 ? int.Parse(line[1]) : (int?)null);
             var name = Path.GetFileNameWithoutExtension(additionalFile.Path);
             
-            // генерируем код енама
+            // generate enum code
             var enumValues = values.Select(kv =>
             {
                 var (name, value) = (kv.Key, kv.Value);
@@ -82,7 +83,7 @@ public class EnumSourceGenerator : ISourceGenerator
                 return EnumMemberDeclaration(name);
             }).ToArray();
 
-            // строим неймспейс, тип енама и его значения
+            // build namespace, enum type, and its values
             MemberDeclarationSyntax content = EnumDeclaration(name).AddMembers(enumValues);
             var namespaceName = context.Compilation.Assembly.NamespaceNames.FirstOrDefault(ns => !string.IsNullOrEmpty(ns));
 
@@ -100,45 +101,45 @@ public class EnumSourceGenerator : ISourceGenerator
 }
 ```
 
-С генератором закончили, поехали дальше.
+The generator is done, let's move on.
 
-## Интеграция в dotnet:
+## Integration in .NET:
 
-В дотнет проект добавляем наш enum файл и лезем в настройки. Открываем свойства и выбрираем в настройках Build Action -> AdditionalFiles вот так:
+Add our enum file to the .NET project and go to the settings. Open properties and select Build Action -> AdditionalFiles like this:
 
 ![2](2.png)
 
-Генератор должен это все переварить и в выхлопе сорс генератора можем наблюдать наш енам:
+The generator should process this, and in the source generator output, we can see our enum:
 
 ![3](3.png)
 
-> Стоит отметить что, например, Rider будет перегенеривать класс каждый раз когда мы меняем исходный файл.
+> It is worth noting that, for example, Rider will regenerate the class every time we change the source file.
 
-## Интеграция в Unity:
+## Integration in Unity:
 
-С юнити немножко сложнее, потому что у нас нет как таковых файлов проекта, юнька генерит их сама и редачить их руками нет никакого смысла потому что при следующей компиляции они затрутся.
+With Unity, it is a bit more complicated because we don't have project files per se; Unity generates them automatically, and editing them manually makes no sense because they will be overwritten at the next compilation.
 
-Но выход есть, и называется он csc.rsp. Это специальный механизм передачи внешних параметров в компилятор MSBuild.
-Мы же будем прокидывать через него доп файлы.
+But there is a way, and it's called csc.rsp. This is a special mechanism for passing external parameters to the MSBuild compiler.
+We will use it to pass additional files.
 
-Для этого в папке с проектом создадим файл csc.rsp со следующим содержимым:
+To do this, create a csc.rsp file in the project folder with the following content:
 
 `-additionalfile:"Assets/MySuperEnum.enum"`
 
-Соответственно и файл с енамом должен у нас лежать в корне проекта.
-Пути должны быть относительно рута проекта что не очень удобно, но решается кастомным ассет импортером.
+Accordingly, the enum file should be in the root of the project.
+Paths must be relative to the project root, which is inconvenient but can be solved with a custom asset importer.
 
-Когда всё прочихается можем наблюдать наш енам в проекте юнити:
+Once everything is set up, we can see our enum in the Unity project:
 
 ![4](4.png)
 
-Использовать в наших скриптах:
+Use it in our scripts:
 
 ![5](5.png)
 
-И наблюдать в самой юнити:
+And observe it in Unity itself:
 
 ![6](6.png)
 
-Что с этим можно делать в перспективе? Да кучу всего на что хватит фантазии и терпения.
-Всем Cheers!
+What can you do with this in the future? Lots of things, as long as you have the imagination and patience.
+Cheers, everyone!

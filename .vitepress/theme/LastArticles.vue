@@ -2,13 +2,20 @@
 import { computed } from 'vue';
 import { Post, data as postsData } from './posts.data.js'
 import LastArticle from './LastArticle.vue'
+import { useData } from 'vitepress';
 
 const props = defineProps<{
     filter?: string[] | undefined;
     limit?: number | undefined;
+    lang?: string | undefined
 }>();
 
-const filteredPosts = computed(() => getFilteredPosts(postsData.posts, props.filter, props.limit));
+const filteredPosts = computed(() => getFilteredPosts(postsData.posts, props.filter, props.limit, props.lang));
+const { lang } = useData()
+const readFull: Record<string, string> = {
+    'en-US': "Continue reading...",
+    'ru-RU': "Читать далее..."
+} // much nicer syntax for initialization.
 
 function computeGrid(posts:Post[]):string {
     const length = posts?.length
@@ -20,8 +27,14 @@ function computeGrid(posts:Post[]):string {
     return ''
 }
 
-function getFilteredPosts(posts:Post[], filter?:string[], limit?:number): Post[] {
+function getFilteredPosts(posts:Post[], filter?:string[], limit?:number, lang?:string): Post[] {
   var filteredPosts = posts;
+  if (lang === undefined) {
+    lang = 'en-US'
+  }
+
+  filteredPosts = filteredPosts.filter(p => p.lang == lang);
+  
   if (filter && filter.length > 0) {
     filteredPosts = filteredPosts.filter(post => {
       if (post.tags == undefined) return false;
@@ -32,6 +45,7 @@ function getFilteredPosts(posts:Post[], filter?:string[], limit?:number): Post[]
   if (limit !== undefined) {
     filteredPosts = filteredPosts.slice(0, limit);
   }
+
   return filteredPosts;
 }
 </script>
@@ -46,7 +60,7 @@ function getFilteredPosts(posts:Post[], filter?:string[], limit?:number): Post[]
                         :title="post.title"
                         :details="post.excerpt!"
                         :link="post.url"
-                        :link-text='"Читать полностью..."'
+                        :link-text='readFull[lang]'
                         :rel="undefined"
                         :target="undefined"
                         :tags="post.tags"

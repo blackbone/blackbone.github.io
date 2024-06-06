@@ -1,7 +1,7 @@
 ---
 layout: doc
-title: All posts
-lang: en-US
+title: Все посты
+lang: ru-RU
 next: false
 prev: false
 ---

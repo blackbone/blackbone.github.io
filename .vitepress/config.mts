@@ -4,14 +4,12 @@ import { Feed } from 'feed'
 import { defineConfig, createContentLoader, HeadConfig, SiteConfig } from 'vitepress'
 import { generateSidebar } from 'vitepress-sidebar';
 
-const hostname: string = 'https://blackbone.github.io'
+const hostname: string = 'https://uprt.dev'
 const copyright: string = 'Copyright © ' + (new Date().getFullYear() == 2023 ? '2023' : '2023 - ' + new Date().getFullYear()) + ' blackbone'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  lang: 'ru-RU',
-  title: "Упрт Рзрбтк",
-  description: "Упртя рзрбтка от упртг рзрбтчк.\nТут больше кринжи, чем полезной информации, так что - зло пожаловать.",
+  lang: 'en-US',
   head: [
     ['link', { rel: 'icon', href: 'favicon.ico' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
@@ -32,30 +30,21 @@ export default defineConfig({
     hostname: hostname
   },
 
-  themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
-    logo: '/logo-dark.png',
-    // social links
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/blackbone' }
-    ],
-    // footer content
-    footer: {
-      copyright: copyright
-    },
-  },
-
   // localization
   locales: {
     root:  {
-      label: 'Русский',
-      lang: 'ru-RU',
+      title: "Mess Dev",
+      description: "Fresh, sweet cringe.",
+      label: 'English',
+      lang: 'en-US',
       themeConfig: {
+        // top nav
         nav: [
-          { text: 'Домой', link: '/' },
-          { text: 'Все посты', link: '/posts' },
+          { text: 'Home', link: '/' },
+          { text: 'All posts', link: '/posts' },
           { text: 'RSS', link: `${hostname}/feed.rss` },
         ],
+        // sidebar for posts
         sidebar: generateSidebar([
           {
             sortMenusByFrontmatterOrder: true,
@@ -65,12 +54,62 @@ export default defineConfig({
             documentRootPath: '/posts/',
             scanStartPath: '/',
             resolvePath: '/posts/',
-            excludeFiles: ['posts/index.md'],
+            excludeFiles: ['/posts/index.md'],
             includeRootIndexFile: false,
             collapseDepth: 1,
             excludeFolders: [".", "node_modules", "dist", "public", "src", "vitepress", "vitepress-sidebar"],
           }
-        ])
+        ]),
+        // https://vitepress.dev/reference/default-theme-config
+        logo: '/logo-dark.png',
+        // social links
+        socialLinks: [
+          { icon: 'github', link: 'https://github.com/blackbone' }
+        ],
+        // footer content
+        footer: {
+          copyright: copyright
+        },
+      }
+    },
+    ru: {
+      title: "Упрт Рзрбтк",
+      description: "Упоротая, медовая дичь.",
+      label: 'Русский',
+      lang: 'ru-RU',
+      themeConfig: {
+        // top nav
+        nav: [
+          { text: 'Домой', link: '/ru/' },
+          { text: 'Все посты', link: '/ru/posts' },
+          { text: 'RSS', link: `${hostname}/feed.rss` },
+        ],
+        // sidebar for posts
+        sidebar: generateSidebar([
+          {
+            sortMenusByFrontmatterOrder: true,
+            useFolderLinkFromIndexFile: true,
+            useTitleFromFrontmatter: true,
+            useFolderTitleFromIndexFile: true,
+            documentRootPath: '/ru/posts/',
+            scanStartPath: '/',
+            resolvePath: '/ru/posts/',
+            excludeFiles: ['/ru/posts/index.md'],
+            includeRootIndexFile: false,
+            collapseDepth: 1,
+            excludeFolders: [".", "node_modules", "dist", "public", "src", "vitepress", "vitepress-sidebar"],
+          }
+        ]),
+        // https://vitepress.dev/reference/default-theme-config
+        logo: '/logo-dark.png',
+        // social links
+        socialLinks: [
+          { icon: 'github', link: 'https://github.com/blackbone' }
+        ],
+        // footer content
+        footer: {
+          copyright: copyright
+        },
       }
     }
   },

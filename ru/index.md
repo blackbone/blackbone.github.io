@@ -1,9 +1,9 @@
 ---
 layout: home
-lang: en-US
+lang: ru-RU
 hero:
-  name: Newest writings
-  tagline: Fresh, sweet cringe
+  name: Свежая писатина
+  tagline: Упоротая, медовая дичь
   image:
     light: '../logo-dark.png'
     dark: '../logo-dark.png'
@@ -12,6 +12,6 @@ hero:
     alt: VitePress
   actions:
     - theme: brand
-      text: ☕️ You know what to do
+      text: ☕️ Ты знаешь что делать
       link: https://www.buymeacoffee.com/blackbone
 ---
