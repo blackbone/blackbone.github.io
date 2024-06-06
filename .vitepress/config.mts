@@ -1,5 +1,11 @@
-import { defineConfig, HeadConfig } from 'vitepress'
+import path from 'path'
+import { writeFileSync } from 'fs'
+import { Feed } from 'feed'
+import { defineConfig, createContentLoader, HeadConfig, SiteConfig } from 'vitepress'
 import { generateSidebar } from 'vitepress-sidebar';
+
+const hostname: string = 'https://blackbone.github.io'
+const copyright: string = 'Copyright © ' + (new Date().getFullYear() == 2023 ? '2023' : '2023 - ' + new Date().getFullYear()) + ' blackbone'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -15,15 +21,15 @@ export default defineConfig({
   transformHead: ({ pageData }) => {
     const head: HeadConfig[] = []
 
-    head.push(['meta', { property: 'og:title', content: pageData.frontmatter.title }])
-    head.push(['meta', { property: 'og:description', content: pageData.frontmatter.description }])
+    if (pageData.frontmatter.title !== undefined) head.push(['meta', { property: 'og:title', content: pageData.frontmatter.title }])
+    if (pageData.frontmatter.description !== undefined) head.push(['meta', { property: 'og:description', content: pageData.frontmatter.description }])
 
     return head
   },
 
   cleanUrls: true,
   sitemap: {
-    hostname: 'https://blackbone.github.io'
+    hostname: hostname
   },
 
   themeConfig: {
@@ -35,7 +41,7 @@ export default defineConfig({
     ],
     // footer content
     footer: {
-      copyright: 'Copyright © ' + (new Date().getFullYear() == 2023 ? '2023' : '2023 - ' + new Date().getFullYear()) + ' blackbone'
+      copyright: copyright
     },
   },
 
@@ -48,7 +54,7 @@ export default defineConfig({
         nav: [
           { text: 'Домой', link: '/' },
           { text: 'Все посты', link: '/posts' },
-          { text: 'RSS', link: '/rss' },
+          { text: 'RSS', link: `${hostname}/feed.rss` },
         ],
         sidebar: generateSidebar([
           {
@@ -67,5 +73,50 @@ export default defineConfig({
         ])
       }
     }
+  },
+
+  buildEnd: async (config: SiteConfig) => {
+    const feed = new Feed({
+      title: 'Упрт Рзрбтк',
+      description: 'Упоротая, медовая дичь',
+      id: hostname,
+      link: hostname,
+      language: 'ru',
+      image: `${hostname}/logo-dark.png`,
+      favicon: `${hostname}/favicon.ico`,
+      copyright: copyright
+    })
+
+    // You might need to adjust this if your Markdown files 
+    // are located in a subfolder
+    const posts = await createContentLoader(['posts/**/*.md', '!*/index.md'], {
+      excerpt: true,
+      render: true
+    }).load()
+  
+    posts.sort(
+      (a, b) =>
+        +new Date(b.frontmatter.date as string) -
+        +new Date(a.frontmatter.date as string)
+    )
+  
+    for (const { url, excerpt, frontmatter, html } of posts) {
+      feed.addItem({
+        title: frontmatter.title,
+        id: `${hostname}${url}`,
+        link: `${hostname}${url}`,
+        description: excerpt,
+        content: html,
+        author: [
+          {
+            name: 'blackbone',
+            link: `${hostname}`
+          }
+        ],
+        date: frontmatter.date
+      })
+    }
+  
+    writeFileSync(path.join(config.outDir, 'feed.rss'), feed.rss2())
   }
 })
