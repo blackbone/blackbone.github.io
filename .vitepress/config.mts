@@ -7,6 +7,27 @@ import { generateSidebar } from 'vitepress-sidebar';
 const hostname: string = 'https://uprt.dev'
 const copyright: string = 'Copyright © ' + (new Date().getFullYear() == 2023 ? '2023' : '2023 - ' + new Date().getFullYear()) + ' blackbone'
 
+const langs = [
+  {
+    id: 'en-US',
+    prefix: '/',
+    isRoot: true
+  },
+  {
+    id: 'ru-RU',
+    prefix: '/ru',
+    isRoot: false
+  },
+]
+
+function getLogoUrl(url: string):string {
+  langs.forEach(l => {
+    if (l.isRoot) return;
+    if (url.startsWith(l.prefix)) url = url.replace(l.prefix, '/')
+  });
+  return url + "logo.jpg"
+}
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   lang: 'en-US',
@@ -21,6 +42,7 @@ export default defineConfig({
 
     if (pageData.frontmatter.title !== undefined) head.push(['meta', { property: 'og:title', content: pageData.frontmatter.title }])
     if (pageData.frontmatter.description !== undefined) head.push(['meta', { property: 'og:description', content: pageData.frontmatter.description }])
+    if (pageData.frontmatter.url !== undefined) head.push(['meta', { property: 'og:image', content: getLogoUrl(pageData.frontmatter.url) }])
 
     return head
   },
