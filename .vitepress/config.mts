@@ -33,7 +33,7 @@ export default defineConfig({
   // localization
   locales: {
     root:  {
-      title: "Mess Dev",
+      title: "Uprt Dev",
       description: "Fresh, sweet cringe.",
       label: 'English',
       lang: 'en-US',
