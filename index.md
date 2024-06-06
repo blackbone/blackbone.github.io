@@ -10,4 +10,8 @@ hero:
     width: 160px
     height: 160px
     alt: VitePress
+  actions:
+    - theme: brand
+      text: ☕️ Ты знаешь что делать
+      link: https://www.buymeacoffee.com/blackbone
 ---
