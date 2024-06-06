@@ -18,7 +18,7 @@ watchEffect(() => {
 <template>
     <Layout>
         <template #home-features-before>
-            <LastArticles v-if="frontmatter.layout==='home'"/>
+            <LastArticles v-if="frontmatter.layout==='home'" :limit="8"/>
         </template>
     </Layout>
 </template>

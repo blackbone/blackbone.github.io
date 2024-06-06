@@ -1,6 +1,6 @@
 ---
 layout: doc
-title: Все посты по сорс генераторам
+title: SG в юнити
 next: false
 prev: Все посты
 ---
@@ -11,5 +11,4 @@ import { useData } from 'vitepress'
 
 # {{ $frontmatter.title }}
 
-
-
+Немножко о том как заставить код писать код в контексте всеми любимого багованного движка.

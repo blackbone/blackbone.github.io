@@ -1,4 +1,4 @@
-import { ContentData, DefaultTheme, createContentLoader } from 'vitepress'
+import { DefaultTheme, createContentLoader } from 'vitepress'
 
 export interface PostsData {
   posts: Post[],
@@ -16,18 +16,6 @@ export interface Post {
     }
     excerpt: string | undefined,
     tags: string[] | undefined
-}
-
-function getAllTags(posts:Post[]): string[] {
-  var tags: string[] = []
-  posts.forEach(p => {
-    if (p.tags == undefined) return;
-    p.tags.forEach(t => {
-      if (tags.indexOf(t) == -1) tags.push(t)
-    })
-  });
-  tags.filter((x, i, a) => a.indexOf(x) === i)
-  return tags;
 }
 
 declare const data: PostsData
@@ -61,7 +49,8 @@ export default createContentLoader(['posts/**/*.md'], {
       var tags = getAllTags(posts)
       let result: PostsData = {
         posts: posts,
-        tags: tags
+        tags: tags,
+        filter: (filter?:string[], limit?:number) => getFilteredPosts(posts, filter, limit),
       }
 
       return result;
@@ -78,4 +67,37 @@ function formatDate(raw: string): Post['date'] {
       day: 'numeric'
     })
   }
+}
+
+function getAllTags(posts:Post[]): string[] {
+  var tags: string[] = []
+  posts.forEach(p => {
+    if (p.tags == undefined) return;
+    p.tags.forEach(t => {
+      if (tags.indexOf(t) == -1) tags.push(t)
+    })
+  });
+  tags.filter((x, i, a) => a.indexOf(x) === i)
+  return tags;
+}
+
+// copy and use where needed
+function getFilteredPosts(posts:Post[], filter?:string[], limit?:number): Post[] {
+  console.log(filter)
+  console.log(limit)
+  
+  var filteredPosts = posts;
+  if (filter && filter.length > 0) {
+    filteredPosts = filteredPosts.filter(post => {
+      if (post.tags == undefined) return false;
+      return post.tags.some(tag => filter.includes(tag));
+    });
+  }
+
+  if (limit !== undefined) {
+    filteredPosts = filteredPosts.slice(0, limit);
+  }
+
+  console.log(filteredPosts)
+  return filteredPosts;
 }
