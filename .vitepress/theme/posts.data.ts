@@ -23,7 +23,9 @@ export { data }
 
 const exludedPaths = [
     "/posts/",
-    "/posts/source_generators/"
+    "/ru/posts/",
+    "/posts/source_generators/",
+    "/ru/posts/source_generators/"
 ]
 
 export default createContentLoader(['posts/**/*.md', 'ru/posts/**/*.md'], {
