@@ -72,6 +72,7 @@ export default defineConfig({
             scanStartPath: '/',
             resolvePath: '/posts/',
             excludeFiles: ['/posts/index.md'],
+            excludeFilesByFrontmatterFieldName: "draft",
             includeRootIndexFile: false,
             collapseDepth: 1,
             excludeFolders: [".", "node_modules", "dist", "public", "src", "vitepress", "vitepress-sidebar"],
@@ -112,6 +113,7 @@ export default defineConfig({
             scanStartPath: '/',
             resolvePath: '/ru/posts/',
             excludeFiles: ['/ru/posts/index.md'],
+            excludeFilesByFrontmatterFieldName: "draft",
             includeRootIndexFile: false,
             collapseDepth: 1,
             excludeFolders: [".", "node_modules", "dist", "public", "src", "vitepress", "vitepress-sidebar"],
@@ -145,7 +147,7 @@ export default defineConfig({
 
     // You might need to adjust this if your Markdown files 
     // are located in a subfolder
-    const posts = await createContentLoader(['posts/**/*.md', '!*/index.md'], {
+    const posts = await createContentLoader(['posts/**/*.md', '!*/index.md', '!**/*.template.md'], {
       excerpt: true,
       render: true
     }).load()

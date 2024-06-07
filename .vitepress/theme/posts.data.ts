@@ -33,7 +33,7 @@ export default createContentLoader(['posts/**/*.md', 'ru/posts/**/*.md'], {
   transform(raw): PostsData {
     var posts = raw
       .filter((p) => {
-        return exludedPaths.indexOf(p.url) == -1})
+        return exludedPaths.indexOf(p.url) == -1 && !p.frontmatter.draft})
       .map(({ url, frontmatter, excerpt }) => ({
         title: frontmatter.title,
         url,
@@ -43,7 +43,7 @@ export default createContentLoader(['posts/**/*.md', 'ru/posts/**/*.md'], {
           height: "100%"
         },
         excerpt,
-        date: formatDate(frontmatter.date),
+        date: formatDate(frontmatter.date, frontmatter.lang),
         lang: frontmatter.lang,
         tags: Array.isArray(frontmatter.tags) ? Array.from(frontmatter.tags).filter((x, i, a) => a.indexOf(x) === i) : frontmatter.tags !== undefined ? [frontmatter.tags] : []
       }))
