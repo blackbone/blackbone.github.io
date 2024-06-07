@@ -2,6 +2,8 @@
 layout: doc
 lang: ru-RU
 title: Additional files в SG для Unity
+description: Реализуем простецкий Source Generator для генерации Enum из текстовых файлов.
+logo: /posts/source_generators/3/logo.jpg
 date: 2024-04-07 03:00:00
 tags:
   - dotnet

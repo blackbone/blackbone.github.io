@@ -15,18 +15,10 @@ const langs = [
   },
   {
     id: 'ru-RU',
-    prefix: '/ru',
+    prefix: 'ru/',
     isRoot: false
   },
 ]
-
-function getLogoUrl(url: string):string {
-  langs.forEach(l => {
-    if (l.isRoot) return;
-    if (url.startsWith(l.prefix)) url = url.replace(l.prefix, '/')
-  });
-  return url + "logo.jpg"
-}
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -35,14 +27,17 @@ export default defineConfig({
     ['link', { rel: 'icon', href: 'favicon.ico' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
-    ['link', { href: 'https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Ubuntu+Mono:wght@400..500&display=swap', rel: "stylesheet" }]
+    ['link', { href: 'https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Ubuntu+Mono:wght@400..500&display=swap', rel: "stylesheet" }],
+    ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-R88DZGJBSN' }],
+    ['script', {}, "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-R88DZGJBSN');"]
   ],
   transformHead: ({ pageData }) => {
     const head: HeadConfig[] = []
 
-    if (pageData.frontmatter.title !== undefined) head.push(['meta', { property: 'og:title', content: pageData.frontmatter.title }])
-    if (pageData.frontmatter.description !== undefined) head.push(['meta', { property: 'og:description', content: pageData.frontmatter.description }])
-    if (pageData.frontmatter.url !== undefined) head.push(['meta', { property: 'og:image', content: getLogoUrl(pageData.frontmatter.url) }])
+    // TODO gather logo from frontmatter
+    if (pageData.frontmatter.title !== undefined)       head.push(['meta', { property: 'og:title',        content: pageData.frontmatter.title }])
+    if (pageData.frontmatter.description !== undefined) head.push(['meta', { property: 'og:description',  content: pageData.frontmatter.description }])
+    if (pageData.frontmatter.logo !== undefined)        head.push(['meta', { property: 'og:image',        content: pageData.frontmatter.logo }])
 
     return head
   },

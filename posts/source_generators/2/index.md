@@ -2,6 +2,8 @@
 layout: doc
 lang: en-US
 title: How to Determine if SG is in Unity
+description: Determining Unity (and other) uasges of source generator to make it reusable acrosss environments.
+logo: /posts/source_generators/2/logo.jpg
 date: 2024-04-07 02:00:00
 tags:
   - dotnet

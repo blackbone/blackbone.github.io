@@ -2,6 +2,8 @@
 layout: doc
 lang: ru-RU
 title: Статейка о том как я сетаплю SG для юньки
+description: Генераторы исходного кода в C# - очень мощная штука, но не все знают, как их готовить.
+logo: /posts/source_generators/1/logo.jpg
 date: 2024-04-07 01:00:00
 tags:
   - dotnet

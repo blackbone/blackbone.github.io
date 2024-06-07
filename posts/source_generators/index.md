@@ -8,8 +8,20 @@ prev: Все посты
 
 <script setup lang="ts">
 import { useData } from 'vitepress'
+import { Post, data as postsData } from 'posts.data.js'
+
+const posts = getFilteredPosts();
+
+function getFilteredPosts(): Post[] {
+    return undefined;
+}
+
 </script>
 
 # {{ $frontmatter.title }}
 
 A bit about how to make code write code in the context of everyone's favorite buggy engine.
+
+<div v-for="post in posts">
+    <h1>post</h1>
+</div>

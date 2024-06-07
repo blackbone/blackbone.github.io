@@ -12,6 +12,6 @@ import { useData } from 'vitepress'
 
 # {{ $frontmatter.title }}
 
-## [SG в юнити](/posts/source_generators/)
+## [Source Generators in Unity and .NET](/posts/source_generators/)
 
-Немножко о том как заставить код писать код в контексте всеми любимого багованного движка.
+A bit of knowledge how to set up and use source generators with Unity.

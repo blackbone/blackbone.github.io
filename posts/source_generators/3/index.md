@@ -2,6 +2,8 @@
 layout: doc
 lang: en-US
 title: Additional files in SG for Unity
+description: Implementing simple enum generator to highlight how to work with additional files in Unity context.
+logo: /posts/source_generators/3/logo.jpg
 date: 2024-04-07 03:00:00
 tags:
   - dotnet

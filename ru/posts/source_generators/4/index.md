@@ -2,6 +2,8 @@
 layout: doc
 lang: ru-RU
 title: SG фабрика
+description: Реализауем более сложный Source Generator - генератор для фабрик в данном случае.
+logo: /posts/source_generators/4/logo.jpg
 date: 2024-05-12 04:00:00
 tags:
   - dotnet
