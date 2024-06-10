@@ -1,12 +1,12 @@
 ---
 layout: doc
 ignore: true
-title: Random posts
-description: Random posts on random topics
+title: Posts Related to ECS
+description: Posts Related to ECS
 lang: en-US
 next: false
 prev:
-  text: 'All posts'
+  text: 'All Posts'
   link: '/posts'
 ---
 
@@ -19,5 +19,5 @@ import { useData } from 'vitepress'
 {{ $frontmatter.description }}
 
 <ArticleList
-    :tags="['random']"
+    :tags="['ecs']"
     :lang="$frontmatter.lang"/>

@@ -53,13 +53,13 @@ defineProps<{
           <div class="content">
             <h2 class="title" v-html="title"></h2>
             <p v-if="details" class="details" v-html="details"></p>
-            <Tags :tags="tags"/>
-            <Date :date="date" v-if="date" class="date"/>
+            <Tags :tags="tags" class="tags"/>
             <div v-if="linkText" class="link-text">
               <p class="link-text-value">
                 {{ linkText }} <span class="vpi-arrow-right link-text-icon" />
               </p>
             </div>
+            <Date :date="date" v-if="date" class="date"/>
           </div>
         </div>
     </VPLink>
@@ -141,7 +141,9 @@ a:hover {
 
 .link-text {
   position: absolute;
-  margin: 4px;
+  font-size: 13px;
+  margin: 4px 0px;
+  padding: 0;
   right: 0;
   bottom: 0;
 }
@@ -160,8 +162,54 @@ a:hover {
 
 .date {
   position: absolute;
-  margin: -6px 4px;
-  right: 0;
-  top: 0;
+  padding: 0;
+  font-size: 13px;
+  margin: 4px 0px;
+  left: 0;
+  bottom: 0;
+}
+
+@media (min-width: 320px) {
+    .details {
+        display: flex;
+        font-size: 14px;
+        line-height: 1.3;
+    }
+    
+    .tags { 
+      display: none;
+    }
+
+    .date {
+      position: absolute;
+      left: 0;
+      right: auto;
+      top: auto;
+      bottom: 0;
+    }
+}
+
+@media (min-width: 640px) {
+    .details {
+        display: flex;
+    }
+    
+    .tags { 
+      display: flex;
+      position: absolute;
+      left: 0;
+      right: auto;
+      top: auto;
+      bottom: 4px;
+    }
+
+    .date {
+      position: absolute;
+      margin: -6px 4px;
+      left: auto;
+      right: 0;
+      top: 0;
+      bottom: auto;
+    }
 }
 </style>

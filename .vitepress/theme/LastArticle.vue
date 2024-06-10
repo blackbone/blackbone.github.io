@@ -46,17 +46,18 @@ defineProps<{
             :width="icon.width || 48"
         />
         <div v-else-if="icon" class="icon" v-html="icon"></div>
-        <h2 class="title" v-html="title"></h2>
-        <p v-if="details" class="details" v-html="details"></p>
+
 
         <div class="bottom">
-            <div v-if="linkText" class="link-text">
+          <h2 class="title" v-html="title"></h2>
+          <p v-if="details" class="details" v-html="details"></p>
+          <Tags v-if="tags" :tags="tags"/>
+          <div v-if="linkText" class="link-text">
                 <p class="link-text-value">
                 {{ linkText }} <span class="vpi-arrow-right link-text-icon" />
                 </p>
-            </div>
-            <Tags v-if="tags" :tags="tags"/>
-            <Date :date="date"/>
+          </div>
+          <Date :date="date" class="date"/>
         </div>
         </article>
     </VPLink>
@@ -133,10 +134,21 @@ defineProps<{
 }
 
 .bottom {
+  position: relative;
   margin-top: 6px;
   display: flex;
-  align-items: center;
+  align-items: start;
+  flex-direction: column;
   height: 100%;
   flex-wrap: wrap;
+}
+
+.date {
+  position: absolute;
+  padding: 0;
+  font-size: 13px;
+  margin: -16px 0px;
+  right: 0;
+  top: 0;
 }
 </style>

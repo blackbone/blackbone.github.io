@@ -1,8 +1,8 @@
 ---
 layout: doc
 ignore: true
-title: Посты обо всём
-description: Рандомные посты на рандомные темы
+title: Посты связанные про УСЫ (ECS)
+description: Посты связанные про УСЫ (ECS)
 lang: ru-RU
 next: false
 prev:
@@ -19,5 +19,5 @@ import { useData } from 'vitepress'
 {{ $frontmatter.description }}
 
 <ArticleList
-    :tags="['random']"
+    :tags="['ecs']"
     :lang="$frontmatter.lang"/>
