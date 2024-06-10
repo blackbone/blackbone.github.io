@@ -1,8 +1,8 @@
 ---
 layout: doc
 ignore: true
-title: Source Generators и Unity
-descrition: Немножко о том как заставить код писать код в контексте всеми любимого багованного движка.
+title: Посты обо всём
+desscription: Рандомные посты на рандомные темы
 lang: ru-RU
 next: false
 prev:
@@ -19,5 +19,5 @@ import { useData } from 'vitepress'
 {{ $frontmatter.description }}
 
 <ArticleList
-    :tags="['sourcegenerator']"
+    :tags="['random']"
     :lang="$frontmatter.lang"/>

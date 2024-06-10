@@ -1,5 +1,6 @@
 ---
 layout: doc
+ignore: true
 title: Все посты
 lang: ru-RU
 next: false

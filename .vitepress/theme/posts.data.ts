@@ -21,20 +21,13 @@ export interface Post {
 declare const data: PostsData
 export { data }
 
-const exludedPaths = [
-    "/posts/",
-    "/ru/posts/",
-    "/posts/source_generators/",
-    "/ru/posts/source_generators/"
-]
-
 export default createContentLoader(['posts/**/*.md', 'ru/posts/**/*.md'], {
   excerpt: true,
   transform(raw): PostsData {
     var posts = raw
       .filter((p) => {
-        return exludedPaths.indexOf(p.url) == -1 && !p.frontmatter.draft})
-      .map(({ url, frontmatter, excerpt }) => ({
+        return !p.frontmatter.draft && !p.frontmatter.ignore})
+      .map(({ url, frontmatter }) => ({
         title: frontmatter.title,
         url,
         icon: {

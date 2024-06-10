@@ -1,5 +1,6 @@
 ---
 layout: doc
+ignore: true
 title: All posts
 lang: en-US
 next: false
