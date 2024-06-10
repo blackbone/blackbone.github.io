@@ -19,5 +19,5 @@ import { useData } from 'vitepress'
 {{ $frontmatter.description }}
 
 <ArticleList
-    :tags="['sourcegenerator']"
+    :tags="['sourcegenerators']"
     :lang="$frontmatter.lang"/>

@@ -18,5 +18,5 @@ export default {
     app.component("LastArticle", LastArticle)
     app.component("ArticleList", ArticleList)
     app.component("ArticleListItem", ArticleListItem)
-  }
+  },
 } satisfies Theme

@@ -5,19 +5,19 @@ import { useData } from 'vitepress';
 import ArticleListItem from './ArticleListItem.vue';
 
 const props = defineProps<{
-    filter?: string[] | undefined;
+    tags?: string[] | undefined;
     limit?: number | undefined;
     lang?: string | undefined
 }>();
 
-const filteredPosts = computed(() => getFilteredPosts(postsData.posts, props.filter, props.limit, props.lang));
+const filteredPosts = computed(() => filterPosts(postsData.posts, props.tags, props.limit, props.lang));
 const { lang } = useData()
 const readFull: Record<string, string> = {
     'en-US': "Continue reading...",
     'ru-RU': "Читать далее..."
 } // much nicer syntax for initialization.
 
-function getFilteredPosts(posts:Post[], filter?:string[], limit?:number, lang?:string): Post[] {
+function filterPosts(posts:Post[], tags?:string[], limit?:number, lang?:string): Post[] {
   var filteredPosts = posts;
   if (lang === undefined) {
     lang = 'en-US'
@@ -25,10 +25,10 @@ function getFilteredPosts(posts:Post[], filter?:string[], limit?:number, lang?:s
 
   filteredPosts = filteredPosts.filter(p => p.lang == lang);
   
-  if (filter && filter.length > 0) {
+  if (tags && tags.length > 0) {
     filteredPosts = filteredPosts.filter(post => {
       if (post.tags == undefined) return false;
-      return post.tags.some(tag => filter.includes(tag));
+      return post.tags.some(tag => tags.includes(tag));
     });
   }
 

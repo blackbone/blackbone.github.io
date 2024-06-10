@@ -1,4 +1,4 @@
-import { DefaultTheme, createContentLoader } from 'vitepress'
+import { ContentData, DefaultTheme, createContentLoader } from 'vitepress'
 
 export interface PostsData {
   posts: Post[],
@@ -16,18 +16,20 @@ export interface Post {
     }
     excerpt: string | undefined,
     tags: string[] | undefined
+    html: string | undefined
 }
 
 declare const data: PostsData
 export { data }
 
+// get rid of this and use exported function
 export default createContentLoader(['posts/**/*.md', 'ru/posts/**/*.md'], {
   excerpt: true,
   transform(raw): PostsData {
     var posts = raw
       .filter((p) => {
         return !p.frontmatter.draft && !p.frontmatter.ignore})
-      .map(({ url, frontmatter }) => ({
+      .map(({ url, frontmatter, html }) => ({
         title: frontmatter.title,
         url,
         icon: {
@@ -38,7 +40,8 @@ export default createContentLoader(['posts/**/*.md', 'ru/posts/**/*.md'], {
         excerpt: frontmatter.description,
         date: formatDate(frontmatter.date, frontmatter.lang),
         lang: frontmatter.lang,
-        tags: Array.isArray(frontmatter.tags) ? Array.from(frontmatter.tags).filter((x, i, a) => a.indexOf(x) === i) : frontmatter.tags !== undefined ? [frontmatter.tags] : []
+        tags: Array.isArray(frontmatter.tags) ? Array.from(frontmatter.tags).filter((x, i, a) => a.indexOf(x) === i) : frontmatter.tags !== undefined ? [frontmatter.tags] : [],
+        html: html
       }))
       .sort((a, b) => b.date.time - a.date.time)
       var tags = getAllTags(posts)
@@ -51,7 +54,29 @@ export default createContentLoader(['posts/**/*.md', 'ru/posts/**/*.md'], {
   }
 })
 
-function formatDate(raw: string, lang?: string): Post['date'] {
+export function filterPosts(posts:Post[], tags?:string[], limit?:number, lang?:string): Post[] {
+  var filteredPosts = posts;
+  if (lang === undefined) {
+    lang = 'en-US'
+  }
+
+  filteredPosts = filteredPosts.filter(p => p.lang == lang);
+  
+  if (tags && tags.length > 0) {
+    filteredPosts = filteredPosts.filter(post => {
+      if (post.tags == undefined) return false;
+      return post.tags.some(tag => tags.includes(tag));
+    });
+  }
+
+  if (limit !== undefined) {
+    filteredPosts = filteredPosts.slice(0, limit);
+  }
+
+  return filteredPosts;
+}
+
+export function formatDate(raw: string, lang?: string): Post['date'] {
   const date = new Date(raw)
   return {
     time: +date,
@@ -63,7 +88,7 @@ function formatDate(raw: string, lang?: string): Post['date'] {
   }
 }
 
-function getAllTags(posts:Post[]): string[] {
+export function getAllTags(posts:Post[]): string[] {
   var tags: string[] = []
   posts.forEach(p => {
     if (p.tags == undefined) return;
@@ -75,23 +100,30 @@ function getAllTags(posts:Post[]): string[] {
   return tags;
 }
 
-// copy and use where needed
-function getFilteredPosts(posts:Post[], filter?:string[], limit?:number): Post[] {
-  console.log(filter)
-  console.log(limit)
-  
-  var filteredPosts = posts;
-  if (filter && filter.length > 0) {
-    filteredPosts = filteredPosts.filter(post => {
-      if (post.tags == undefined) return false;
-      return post.tags.some(tag => filter.includes(tag));
-    });
-  }
+export function transform(raw: ContentData[]): PostsData {
+  var posts = raw
+    .filter((p) => {
+      return !p.frontmatter.draft && !p.frontmatter.ignore})
+    .map(({ url, frontmatter, html }) => ({
+      title: frontmatter.title,
+      url,
+      icon: {
+        src: url ? (url.replace('/ru', '') + "logo.jpg") : '/not_found.jpg',
+        width: "100%",
+        height: "100%"
+      },
+      excerpt: frontmatter.description,
+      date: formatDate(frontmatter.date, frontmatter.lang),
+      lang: frontmatter.lang,
+      tags: Array.isArray(frontmatter.tags) ? Array.from(frontmatter.tags).filter((x, i, a) => a.indexOf(x) === i) : frontmatter.tags !== undefined ? [frontmatter.tags] : [],
+      html: html
+    }))
+    .sort((a, b) => b.date.time - a.date.time)
+    var tags = getAllTags(posts)
+    let result: PostsData = {
+      posts: posts,
+      tags: tags
+    }
 
-  if (limit !== undefined) {
-    filteredPosts = filteredPosts.slice(0, limit);
-  }
-
-  console.log(filteredPosts)
-  return filteredPosts;
+    return result;
 }

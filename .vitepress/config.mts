@@ -1,24 +1,46 @@
 import path from 'path'
 import { writeFileSync } from 'fs'
 import { Feed } from 'feed'
-import { defineConfig, createContentLoader, HeadConfig, SiteConfig } from 'vitepress'
+import { createContentLoader, defineConfig, HeadConfig, SiteConfig } from 'vitepress'
 import { generateSidebar } from 'vitepress-sidebar';
 
 const hostname: string = 'https://uprt.dev'
 const copyright: string = 'Copyright © ' + (new Date().getFullYear() == 2023 ? '2023' : '2023 - ' + new Date().getFullYear()) + ' blackbone'
 
-const langs = [
-  {
+const langs = {
+  en: {
     id: 'en-US',
     prefix: '/',
-    isRoot: true
+    isRoot: true,
+    feed: new Feed({
+      title: 'Uprt Dev',
+      description: 'Fresh, sweet cringe',
+      id: hostname,
+      link: hostname,
+      language: 'en-US',
+      image: `${hostname}/logo-dark.png`,
+      favicon: `${hostname}/favicon.ico`,
+      copyright: copyright,
+    }),
+    feedPath: 'feed.rss'
   },
-  {
+  ru: {
     id: 'ru-RU',
     prefix: 'ru/',
-    isRoot: false
+    isRoot: false,
+    feed: new Feed({
+      title: 'Упрт Рзрбтк',
+      description: 'Упоротая, медовая дичь',
+      id: hostname,
+      link: hostname,
+      language: 'ru-RU',
+      image: `${hostname}/logo-dark.png`,
+      favicon: `${hostname}/favicon.ico`,
+      copyright: copyright
+    }),
+    feedPath: 'ru/feed.rss'
   },
-]
+}
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -45,6 +67,10 @@ export default defineConfig({
   cleanUrls: true,
   sitemap: {
     hostname: hostname
+  },
+
+  markdown: {
+    lineNumbers: true
   },
 
   // localization
@@ -100,7 +126,7 @@ export default defineConfig({
         nav: [
           { text: 'Домой', link: '/ru/' },
           { text: 'Все посты', link: '/ru/posts' },
-          { text: 'RSS', link: `${hostname}/feed.rss` },
+          { text: 'RSS', link: `${hostname}/ru/feed.rss` },
         ],
         // sidebar for posts
         sidebar: generateSidebar([
@@ -132,25 +158,30 @@ export default defineConfig({
       }
     }
   },
-
+  
   buildEnd: async (config: SiteConfig) => {
-    const feed = new Feed({
-      title: 'Упрт Рзрбтк',
-      description: 'Упоротая, медовая дичь',
-      id: hostname,
-      link: hostname,
-      language: 'ru',
-      image: `${hostname}/logo-dark.png`,
-      favicon: `${hostname}/favicon.ico`,
-      copyright: copyright
-    })
+    await buildRssFeed(config, langs.en.feed, langs.en.id, langs.en.feedPath);
+    await buildRssFeed(config, langs.ru.feed, langs.ru.id, langs.ru.feedPath);
+  }
+})
 
+async function buildRssFeed(config: SiteConfig, feed: Feed, lang: string, feedPath: string) {
     // You might need to adjust this if your Markdown files 
     // are located in a subfolder
-    const posts = await createContentLoader(['posts/**/*.md', '!*/index.md', '!**/*.template.md'], {
+    var posts = await createContentLoader(['posts/**/*.md', '*/posts/**/*.md'], {
       excerpt: true,
       render: true
     }).load()
+
+    posts = posts.filter(p => {
+      return p.frontmatter.lang == lang
+      && !p.frontmatter.draft
+      && p.frontmatter.date !== undefined
+    });
+
+    posts.forEach(p => {
+      console.log(p.frontmatter.lang + " : " + p.frontmatter.title)
+    })
   
     posts.sort(
       (a, b) =>
@@ -164,7 +195,7 @@ export default defineConfig({
         id: `${hostname}${url}`,
         link: `${hostname}${url}`,
         description: excerpt,
-        content: html,
+        content: frontmatter.description,
         author: [
           {
             name: 'blackbone',
@@ -174,7 +205,6 @@ export default defineConfig({
         date: frontmatter.date
       })
     }
-  
-    writeFileSync(path.join(config.outDir, 'feed.rss'), feed.rss2())
-  }
-})
+    
+  writeFileSync(path.join(config.outDir, feedPath), feed.rss2())
+}
