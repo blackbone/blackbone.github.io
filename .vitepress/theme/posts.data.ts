@@ -42,7 +42,7 @@ export default createContentLoader(['posts/**/*.md', 'ru/posts/**/*.md'], {
           width: "100%",
           height: "100%"
         },
-        excerpt,
+        excerpt: frontmatter.description,
         date: formatDate(frontmatter.date, frontmatter.lang),
         lang: frontmatter.lang,
         tags: Array.isArray(frontmatter.tags) ? Array.from(frontmatter.tags).filter((x, i, a) => a.indexOf(x) === i) : frontmatter.tags !== undefined ? [frontmatter.tags] : []

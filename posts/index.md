@@ -15,3 +15,7 @@ import { useData } from 'vitepress'
 ## [Source Generators in Unity and .NET](/posts/source_generators/)
 
 A bit of knowledge how to set up and use source generators with Unity.
+
+## [Random](/posts/random/)
+
+Random posts of random topics.

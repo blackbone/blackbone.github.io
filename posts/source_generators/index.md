@@ -22,6 +22,6 @@ function getFilteredPosts(): Post[] {
 
 A bit about how to make code write code in the context of everyone's favorite buggy engine.
 
-<div v-for="post in posts">
-    <h1>post</h1>
-</div>
+<ArticleList
+    :tags="['sourcegenerator']"
+    :lang="$frontmatter.lang"/>

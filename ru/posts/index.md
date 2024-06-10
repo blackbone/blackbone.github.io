@@ -12,6 +12,10 @@ import { useData } from 'vitepress'
 
 # {{ $frontmatter.title }}
 
-## [SG в юнити](/posts/source_generators/)
+## [Source Generators и Unity](/ru/posts/source_generators/)
 
 Немножко о том как заставить код писать код в контексте всеми любимого багованного движка.
+
+## [Random](/ru/posts/random/)
+
+Случайные посты на случайные темы.

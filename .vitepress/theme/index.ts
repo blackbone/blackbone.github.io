@@ -5,6 +5,8 @@ import './custom.css'
 import Layout from './Layout.vue'
 import LastArticles from './LastArticles.vue'
 import LastArticle from './LastArticle.vue'
+import ArticleList from './ArticleList.vue'
+import ArticleListItem from './ArticleListItem.vue'
 
 export default {
   extends: DefaultTheme,
@@ -14,5 +16,7 @@ export default {
     // register your custom global components
     app.component("LastArticles", LastArticles)
     app.component("LastArticle", LastArticle)
+    app.component("ArticleList", ArticleList)
+    app.component("ArticleListItem", ArticleListItem)
   }
 } satisfies Theme

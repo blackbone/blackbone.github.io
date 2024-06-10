@@ -1,6 +1,7 @@
 ---
 layout: doc
-title: Source Generators в Unity
+title: Source Generators и Unity
+lang: ru-RU
 next: false
 prev: Все посты
 ---
@@ -12,3 +13,7 @@ import { useData } from 'vitepress'
 # {{ $frontmatter.title }}
 
 Немножко о том как заставить код писать код в контексте всеми любимого багованного движка.
+
+<ArticleList
+    :tags="['sourcegenerator']"
+    :lang="$frontmatter.lang"/>
