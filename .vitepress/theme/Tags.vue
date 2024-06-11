@@ -19,10 +19,15 @@ defineProps<{
     display: flex;
     flex-grow: 1;
     flex-wrap: wrap;
-    padding-top: 8px;
+    align-content: end;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin-left: -6px;
 }
+
 .item {
     margin: 0;
     color: var(--vp-c-brand-1);
+    height: 26px;
 }
 </style>

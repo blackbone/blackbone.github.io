@@ -7,5 +7,5 @@ defineProps<{
 </script>
 
 <template>
-    <VPBadge v-if="tag">#{{ tag }}</VPBadge>
+    <VPBadge v-if="tag" class="tag">#{{ tag }}</VPBadge>
 </template>
