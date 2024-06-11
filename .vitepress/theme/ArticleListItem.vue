@@ -34,18 +34,16 @@ defineProps<{
               <VPImage
               :image="icon"
               :alt="icon.alt"
-              :height="108"
-              :width="108"
-              style="width: 108px; height: 108px; margin-right: 16px;"
+              :height="114"
+              :width="114"
               />
           </div>
           <VPImage
               v-else-if="typeof icon === 'object'"
               :image="icon"
               :alt="icon.alt"
-              :height="108"
-              :width="108"
-              style="width: 108px; height: 108px; margin-right: 16px;"
+              :height="114"
+              :width="114"
           />
           <div v-else-if="icon" class="icon" v-html="icon">
           </div>
@@ -70,9 +68,9 @@ defineProps<{
   display: block;
   border: 1px solid var(--vp-c-bg-soft-1);
   border-radius: 12px;
-  height: 134px;
   background-color: var(--vp-c-bg-soft);
   transition: border-color 0.25s, background-color 0.25s;
+  height: 134px;
 }
 
 .ArticleListItem.link:hover {
@@ -104,18 +102,15 @@ a:hover {
 }
 
 .box > :deep(.VPImage) {
-  margin-bottom: 20px;
+  margin: 0 12px 0 0;
 }
 
 .icon {
-  display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
-  border-radius: 6px;
   background-color: var(--vp-c-default-soft);
-  width: 48px;
-  height: 48px;
+  width: 114px;
+  height: 114px;
   font-size: 24px;
   transition: background-color 0.25s;
 }
@@ -169,14 +164,22 @@ a:hover {
   bottom: 0;
 }
 
-@media (min-width: 320px) {
+@media (min-width: 180px) {
     .details {
         display: flex;
         font-size: 14px;
         line-height: 1.3;
     }
     
+    .box > :deep(.VPImage) {
+        display: none;
+    }
+
     .tags { 
+      display: none;
+    }
+
+    .icon { 
       display: none;
     }
 
@@ -189,18 +192,22 @@ a:hover {
     }
 }
 
-@media (min-width: 640px) {
+@media (min-width: 700px) {
     .details {
         display: flex;
     }
     
+    .box > :deep(.VPImage) {
+        display: flex;
+    }
+
     .tags { 
       display: flex;
       position: absolute;
       left: 0;
       right: auto;
       top: auto;
-      bottom: 4px;
+      bottom: 0;
     }
 
     .date {
