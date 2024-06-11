@@ -16,8 +16,6 @@ import { useData } from 'vitepress'
 
 # {{ $frontmatter.title }}
 
-{{ $frontmatter.description }}
-
 <ArticleList
     :tags="['random']"
     :lang="$frontmatter.lang"/>

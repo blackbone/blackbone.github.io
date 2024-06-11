@@ -20,3 +20,7 @@ import { useData } from 'vitepress'
 ## [Random](/ru/posts/random/)
 
 Случайные посты на случайные темы.
+
+## [УСЫ (ECS)](/ru/posts/ecs/)
+
+Посты прямо или косвенно у вас под носом.

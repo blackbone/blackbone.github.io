@@ -16,8 +16,6 @@ import { useData } from 'vitepress'
 
 # {{ $frontmatter.title }}
 
-{{ $frontmatter.description }}
-
 <ArticleList
     :tags="['sourcegenerators']"
     :lang="$frontmatter.lang"/>

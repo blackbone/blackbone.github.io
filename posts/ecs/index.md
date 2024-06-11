@@ -2,7 +2,7 @@
 layout: doc
 ignore: true
 title: Posts Related to ECS
-description: Posts Related to ECS
+description: All stuff related to ECS in direct or indirect way
 lang: en-US
 next: false
 prev:
@@ -15,8 +15,6 @@ import { useData } from 'vitepress'
 </script>
 
 # {{ $frontmatter.title }}
-
-{{ $frontmatter.description }}
 
 <ArticleList
     :tags="['ecs']"
