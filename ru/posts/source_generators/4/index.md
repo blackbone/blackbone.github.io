@@ -8,6 +8,7 @@ date: 2024-05-12 04:00:00
 tags:
   - dotnet
   - sourcegenerators
+  - unity
 prev:
   text: 'Additional files в SG для Unity'
   link: '/posts/source_generators/3'

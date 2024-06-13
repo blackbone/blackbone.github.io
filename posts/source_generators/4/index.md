@@ -8,6 +8,8 @@ date: 2024-05-12 04:00:00
 tags:
   - dotnet
   - sourcegenerators
+  - unity
+  - ai-translated
 prev:
   text: 'Additional files in SG for Unity.'
   link: '/posts/source_generators/3'
@@ -16,6 +18,10 @@ next:
   link: '/posts/source_generators/'
 ---
 # {{ $frontmatter.title }}
+
+::: warning
+This post has been translated by artificial intelligence and needs proofreading.
+:::
 
 ## Problem:
 

@@ -1,6 +1,6 @@
 :root {
-    --vp-c-brand-1: #507dae;
-    --vp-c-brand-2: #626262;
+    --vp-c-brand-1: #626262;
+    --vp-c-brand-2: #507dae;
 
 
     /* logo colors */ 
@@ -15,11 +15,11 @@
     font-optical-sizing: auto;
 
 
-    --vp-c-bg: #dfe5ef;
-    --vp-c-bg-alt: #e4efff;
-    --vp-c-bg-elv: #ebf2fe;
-    --vp-c-bg-soft: #d0ddef;
-    --vp-c-bg-soft-1: #b4c0d1;
+    --vp-c-bg: #dee6ef;
+    --vp-c-bg-alt: #f2f7ff;
+    --vp-c-bg-elv: #edf4ff;
+    --vp-c-bg-soft: #d6e3ec;
+    --vp-c-bg-soft-1: #b7c7dc;
 }
   
 .dark {

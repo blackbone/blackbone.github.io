@@ -9,6 +9,7 @@ tags:
   - dotnet
   - sourcegenerators
   - unity
+  - ai-translated
 prev:
   text: 'All posts about source generators'
   link: '/posts/source_generators/'
@@ -17,6 +18,10 @@ next:
   link: '/posts/source_generators/2'
 ---
 # {{ $frontmatter.title }}
+
+::: warning
+This post has been translated by artificial intelligence and needs proofreading.
+:::
 
 Source generators in C# are pretty cool, but not everyone knows how to use them effectively.
 Less talk - more code.

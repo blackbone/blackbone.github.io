@@ -147,8 +147,8 @@ defineProps<{
   position: absolute;
   padding: 0;
   font-size: 13px;
-  margin: -1px 0px;
+  margin: 0px -12px;
   right: 0;
-  top: 0;
+  bottom: 0;
 }
 </style>

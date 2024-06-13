@@ -114,6 +114,10 @@ export default defineConfig({
         footer: {
           copyright: copyright
         },
+        outline: {
+          label: 'On this page',
+          level: [2, 3]
+        }
       }
     },
     ru: {
@@ -155,6 +159,10 @@ export default defineConfig({
         footer: {
           copyright: copyright
         },
+        outline: {
+          label: 'Содержание',
+          level: [2, 3]
+        }
       }
     }
   },
@@ -175,7 +183,7 @@ async function buildRssFeed(config: SiteConfig, feed: Feed, lang: string, feedPa
 
     posts = posts.filter(p => {
       return p.frontmatter.lang == lang
-      && !p.frontmatter.draft
+      && p.frontmatter.draft !== true
       && p.frontmatter.date !== undefined
     });
 

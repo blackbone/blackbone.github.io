@@ -8,6 +8,7 @@ date: 2024-04-07 02:00:00
 tags:
   - dotnet
   - sourcegenerators
+  - unity
 prev:
   text: 'Статейка о том как я сетаплю SG для юньки'
   link: '/posts/source_generators/1'

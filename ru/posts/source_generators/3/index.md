@@ -8,6 +8,7 @@ date: 2024-04-07 03:00:00
 tags:
   - dotnet
   - sourcegenerators
+  - unity
 prev:
   text: 'Как определить что SG в юнити'
   link: '/posts/2'

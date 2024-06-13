@@ -8,6 +8,8 @@ date: 2024-04-07 03:00:00
 tags:
   - dotnet
   - sourcegenerators
+  - unity
+  - ai-translated
 prev:
   text: 'How to Determine if SG is in Unity'
   link: '/posts/source_generators/2'
@@ -16,6 +18,10 @@ next:
   link: '/posts/source_generators/3'
 ---
 # {{ $frontmatter.title }}
+
+::: warning
+This post has been translated by artificial intelligence and needs proofreading.
+:::
 
 ## Why?
 

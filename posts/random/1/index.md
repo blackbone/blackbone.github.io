@@ -9,12 +9,17 @@ tags:
   - random
   - ecs
   - benchmark
+  - ai-translated
 prev:
   text: 'Posts about everything'
   link: '/posts/random' 
 next: false
 ---
 # {{ $frontmatter.title }}
+
+::: warning
+This post has been translated by artificial intelligence and needs proofreading.
+:::
 
 While writing [benchmarks](https://github.com/blackbone/other-ecs-benchmarks), I got frustrated several times.
 

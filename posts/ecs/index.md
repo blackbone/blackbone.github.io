@@ -1,20 +1,18 @@
 ---
 layout: doc
 ignore: true
-title: Posts Related to ECS
-description: All stuff related to ECS in direct or indirect way
+title: ECS Posts
+description: Posts that relates to Entity Component System
 lang: en-US
 next: false
 prev:
-  text: 'All Posts'
+  text: 'All posts'
   link: '/posts'
 ---
 
-<script setup lang="ts">
-import { useData } from 'vitepress'
-</script>
-
 # {{ $frontmatter.title }}
+
+{{ $frontmatter.description }}
 
 <ArticleList
     :tags="['ecs']"
