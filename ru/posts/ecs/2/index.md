@@ -3,7 +3,7 @@ layout: doc
 lang: ru-RU
 title: '1.2 Теория два-с: виды усов'
 description: Попробуем разобраться с видами и как с ними, в принципе, жить.
-logo: /ru/posts/ecs/2/logo.jpg # путь к основной картинке
+logo: /posts/ecs/2/logo.jpg # путь к основной картинке
 date: 2024-06-11 00:00:00 # дата поста
 tags:
   - ecs
