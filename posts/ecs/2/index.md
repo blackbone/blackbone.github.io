@@ -217,3 +217,7 @@ All this imposes computational costs, which generally slow down the system's per
 
 I won't go into detail, but there are 'other' approaches that allow, for example, *attaching a script to an entity* or *attaching one instance of a component to several entities*, using singletons.
 > In general, such solutions should be avoided unless they solve your specific problem.
+
+## Conclusions
+
+There will be no any. Just figuring out how all this works.
