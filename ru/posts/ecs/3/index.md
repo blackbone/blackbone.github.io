@@ -198,6 +198,7 @@ public readonly struct EntityId : IEquatable<EntityId>
     {
         this.id = id;
         this.gen = gen;
+        this.worldId = worldId;                                                                             // [!code ++]
     }
     
     public bool Equals(EntityId other) => id == other.id && gen == other.gen;                               // [!code --]
