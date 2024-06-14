@@ -8,9 +8,9 @@ date: 2024-06-14 00:00:00 # дата поста
 tags:
   - ecs
 prev:
-  link: '/posts/ecs/2' 
+  link: '/ru/posts/ecs/2' 
 next:
-  link: '/posts/ecs'
+  link: '/ru/posts/ecs'
 ---
 # {{ $frontmatter.title }}
 
