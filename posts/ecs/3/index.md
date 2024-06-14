@@ -12,11 +12,11 @@ prev:
 next:
   link: '/posts/ecs'
 ---
-# {{ $frontmatter.title }}
-
 ::: warning
 This post has been translated by artificial intelligence and needs proofreading.
 :::
+
+# {{ $frontmatter.title }}
 
 ## Let's Get Started
 

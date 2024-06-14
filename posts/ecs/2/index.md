@@ -13,11 +13,11 @@ prev:
 next: 
   link: '/posts/ecs/3' 
 ---
-# {{ $frontmatter.title }}
-
 ::: warning
 This post has been translated by artificial intelligence and needs proofreading.
 :::
+
+# {{ $frontmatter.title }}
 
 Currently, there are quite a few implementations of ECS frameworks, but they can be divided into several main categories.
 

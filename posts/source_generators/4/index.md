@@ -15,11 +15,11 @@ prev:
 next:
   link: '/posts/source_generators/'
 ---
-# {{ $frontmatter.title }}
-
 ::: warning
 This post has been translated by artificial intelligence and needs proofreading.
 :::
+
+# {{ $frontmatter.title }}
 
 ## Problem:
 
