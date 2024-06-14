@@ -6,7 +6,6 @@ description: Random posts on random topics
 lang: en-US
 next: false
 prev:
-  text: 'All posts'
   link: '/posts'
 ---
 

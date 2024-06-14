@@ -10,10 +10,8 @@ tags:
   - sourcegenerators
   - unity
 prev:
-  text: 'Additional files в SG для Unity'
   link: '/posts/source_generators/3'
 next:
-  text: 'Все посты по сорс генераторам'
   link: '/posts/source_generators/'
 ---
 # {{ $frontmatter.title }}

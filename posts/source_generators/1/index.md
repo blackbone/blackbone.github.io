@@ -11,10 +11,8 @@ tags:
   - unity
   - ai-translated
 prev:
-  text: 'All posts about source generators'
   link: '/posts/source_generators/'
 next:
-  text: 'How to determine if SG is in Unity.'
   link: '/posts/source_generators/2'
 ---
 # {{ $frontmatter.title }}

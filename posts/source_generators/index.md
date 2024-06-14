@@ -5,7 +5,6 @@ title: Source Generators in Unity
 lang: en-US
 next: false
 prev:
-  text: 'All posts'
   link: '/posts'
 ---
 

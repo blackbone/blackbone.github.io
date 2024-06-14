@@ -9,11 +9,9 @@ tags:
   - ecs
   - ai-translated
 prev:
-  text: '1.1 Theory One: ECS for Beginners'
   link: '/posts/ecs/1' 
-next: false
-#   text: '1.3 Theory One: ECS for Beginners'
-#   link: '/posts/ecs/3' 
+next: 
+  link: '/posts/ecs/3' 
 ---
 # {{ $frontmatter.title }}
 

@@ -11,11 +11,9 @@ tags:
   - unity
   - ai-translated
 prev:
-  text: 'How to Determine if SG is in Unity'
   link: '/posts/source_generators/2'
 next:
-  text: 'SG Factory'
-  link: '/posts/source_generators/3'
+  link: '/posts/source_generators/4'
 ---
 # {{ $frontmatter.title }}
 

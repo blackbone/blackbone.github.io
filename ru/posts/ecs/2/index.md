@@ -8,11 +8,9 @@ date: 2024-06-11 00:00:00 # дата поста
 tags:
   - ecs
 prev:
-  text: '1.1 Теория раз: ECS для чайников'
-  link: '/posts/ecs/1' 
-next: false
-#   text: '1.3 Теория раз: ECS для чайников'
-#   link: '/posts/ecs/3' 
+  link: '/ru/posts/ecs/1' 
+next:
+   link: '/ru/posts/ecs/3' 
 ---
 # {{ $frontmatter.title }}
 

@@ -11,7 +11,6 @@ tags:
   - benchmark
   - ai-translated
 prev:
-  text: 'Posts about everything'
   link: '/posts/random' 
 next: false
 ---

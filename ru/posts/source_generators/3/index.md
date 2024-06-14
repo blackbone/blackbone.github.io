@@ -10,11 +10,9 @@ tags:
   - sourcegenerators
   - unity
 prev:
-  text: 'Как определить что SG в юнити'
-  link: '/posts/2'
+  link: '/posts/source_generators/2'
 next:
-  text: 'SG фабрика'
-  link: '/posts/source_generators/3'
+  link: '/posts/source_generators/4'
 ---
 # {{ $frontmatter.title }}
 

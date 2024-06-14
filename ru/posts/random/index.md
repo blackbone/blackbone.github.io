@@ -6,7 +6,6 @@ description: Рандомные посты на рандомные темы
 lang: ru-RU
 next: false
 prev:
-  text: 'Все посты'
   link: '/ru/posts'
 ---
 

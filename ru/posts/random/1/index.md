@@ -9,7 +9,6 @@ tags:
   - random
   - ecs
 prev:
-  text: 'Посты обо всём'
   link: '/ru/posts/random' 
 next: false
 ---

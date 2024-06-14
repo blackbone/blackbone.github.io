@@ -6,7 +6,6 @@ description: Посты прямо или косвенно у вас под но
 lang: ru-RU
 next: false
 prev:
-  text: 'Все посты'
   link: '/ru/posts'
 ---
 

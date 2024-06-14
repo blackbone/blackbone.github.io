@@ -11,10 +11,8 @@ tags:
   - unity
   - ai-translated
 prev:
-  text: 'Article on How I Set Up SG for Unity'
   link: '/posts/source_generators/1'
 next:
-  text: 'Additional files in SG for Unity'
   link: '/posts/source_generators/3'
 ---
 # {{ $frontmatter.title }}

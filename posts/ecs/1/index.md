@@ -10,10 +10,8 @@ tags:
   - ecs
   - ai-translated
 prev:
-  text: 'Posts about ECS'
   link: '/posts/ecs' 
 next:
-  text: '1.2 Theory Two: Types of ECS'
   link: '/posts/ecs/2'
 ---
 # {{ $frontmatter.title }}

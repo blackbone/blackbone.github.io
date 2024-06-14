@@ -9,10 +9,8 @@ date: 2024-06-3 00:00:00 # дата поста
 tags:
   - ecs
 prev:
-  text: 'Посты про УСЫ (ECS)'
   link: '/ru/posts/ecs' 
 next:
-  text: '1.2 Теория два-с: виды усов'
   link: '/ru/posts/ecs/2'
 ---
 # {{ $frontmatter.title }}

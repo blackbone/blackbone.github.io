@@ -11,10 +11,8 @@ tags:
   - unity
   - ai-translated
 prev:
-  text: 'Additional files in SG for Unity.'
   link: '/posts/source_generators/3'
 next:
-  text: 'All posts on source generators'
   link: '/posts/source_generators/'
 ---
 # {{ $frontmatter.title }}
