@@ -69,7 +69,8 @@ export default defineConfig({
 
   cleanUrls: true,
   sitemap: {
-    hostname: hostname
+    hostname: hostname,
+
   },
 
   markdown: {
@@ -174,6 +175,7 @@ export default defineConfig({
   buildEnd: async (config: SiteConfig) => {
     await buildRssFeed(config, langs.en.feed, langs.en.id, langs.en.feedPath);
     await buildRssFeed(config, langs.ru.feed, langs.ru.id, langs.ru.feedPath);
+    await generateRobotsTxt(config);
   }
 })
 
@@ -219,4 +221,13 @@ async function buildRssFeed(config: SiteConfig, feed: Feed, lang: string, feedPa
     }
     
   writeFileSync(path.join(config.outDir, feedPath), feed.rss2())
+}
+
+async function generateRobotsTxt(config: SiteConfig) {
+  const robotsPath = 'robots.txt';
+  const robotsContent = `User-agent: *
+Disallow: 
+Sitemap: https://uprt.dev/sitemap.xml`;
+
+  writeFileSync(path.join(config.outDir, robotsPath), robotsContent)
 }
