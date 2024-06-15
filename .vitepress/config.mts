@@ -59,7 +59,6 @@ export default defineConfig({
   transformHead: ({ pageData }) => {
     const head: HeadConfig[] = []
 
-    // TODO gather logo from frontmatter
     if (pageData.frontmatter.title !== undefined)       head.push(['meta', { property: 'og:title',        content: pageData.frontmatter.title }])
     if (pageData.frontmatter.description !== undefined) head.push(['meta', { property: 'og:description',  content: pageData.frontmatter.description }])
     if (pageData.frontmatter.logo !== undefined)        head.push(['meta', { property: 'og:image',        content: pageData.frontmatter.logo }])
@@ -81,7 +80,7 @@ export default defineConfig({
   locales: {
     root:  {
       title: "Uprt Dev",
-      description: "Fresh, sweet cringe.",
+      description: "Personal blog about Unity, DotNet, C# and other stuff such as ECS, benchmarking, optimization, games and ...",
       label: 'English',
       lang: 'en-US',
       themeConfig: {
@@ -126,7 +125,7 @@ export default defineConfig({
     },
     ru: {
       title: "Упрт Рзрбтк",
-      description: "Упоротая, медовая дичь.",
+      description: "Личный блог про Unity, DotNet, C# и прочие вещи, такие как ECS, бенчмаркинг, оптимизации, игры и ...",
       label: 'Русский',
       lang: 'ru-RU',
       themeConfig: {

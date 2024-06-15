@@ -1,9 +1,11 @@
 ---
+title: Uprt Dev | Fresh, sweet development cringe
+description: Personal blog about Unity, DotNet, C# and other stuff such as ECS, benchmarking, optimization, games and ...
 layout: home
 lang: en-US
 hero:
   name: Newest writings
-  tagline: Fresh, sweet cringe
+  tagline: Fresh, sweet development cringe
   image:
     light: '../logo-dark.png'
     dark: '../logo-dark.png'
