@@ -10,7 +10,7 @@ tags:
 prev:
   link: '/posts/ecs/3' 
 next:
-  link: '/posts/ecs/'
+  link: '/posts/ecs'
 ---
 # {{ $frontmatter.title }}
 
@@ -628,7 +628,7 @@ And in the case of Reverse - deleting the last element we copy the element itsel
 
 - `Random()` is slower than `Linear()` in the case of `RemoveAndSwapBack`, but `Reverse()` is faster.
 > Since our operation is atomic and there is no need to manipulate the "tail," everything comes down to the speed of accessing array elements.
-In linear iteration, the utilization of the prefetcher is maximized (you can read about this [here](Cache_prefetching)).
+In linear iteration, the utilization of the prefetcher is maximized (you can read about this [here](https://en.wikipedia.org/wiki/Cache_prefetching).
 In the case of random access, cache misses occur more frequently, which is evident in the benchmark.
 > `Reverse()` is faster because there is no need to jump between the current index and the last one, thus avoiding cache misses.
 
