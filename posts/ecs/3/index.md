@@ -10,7 +10,7 @@ tags:
 prev:
   link: '/posts/ecs/2' 
 next:
-  link: '/posts/ecs'
+  link: '/posts/ecs/4'
 ---
 ::: warning
 This post has been translated by artificial intelligence and needs proofreading.
