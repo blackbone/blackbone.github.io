@@ -67,7 +67,7 @@ Additionally, `Count`, `All()`, and `AllEntities()` are added because it is a co
 
 <div class="warning custom-block">
 
-In all examples, `int` is used as the Entity Internal Identifier or entityIid in my examples
+In all my examples, `int` is used as the Entity Internal Identifier or entityIid
 [used](https://github.com/blackbone/ecs/blob/103a52467314b7c9b82c67dda18d4ed9b08e87df/ecs2/EntityId.cs#L10) - in other frameworks, it could be a different data type, it's not essential.
 
 What's essential is that EntityId is not used in its entirety here, and checks for world membership and whether the entity is alive or not are not implemented - 
@@ -159,7 +159,7 @@ You can, but we won’t because there’s a better option.
 
 Explained [here](https://www.geeksforgeeks.org/sparse-set/) and [here](https://skypjack.github.io/2019-09-25-ecs-baf-part-5/), so I won't go into much depth.
 
-In a nutshell - it's a clever mapping with addition, reading, writing, and deletion in O(n) but with certain limitations, namely:
+In a nutshell - it's a clever mapping with addition, reading, writing, and deletion in O(1) but with certain limitations, namely:
 - It can only store values in the range [0 : n), where n is the maximum number of elements.
 - Will be sparse instead of our data array (this is acceptable in principle)
 
@@ -233,7 +233,7 @@ With low component utilization, a large number of entities, and small component 
 and we also add additional operations that complicate reading/writing.
 
 Well, this needs to be checked, determine the following values and ranges:
-1. **N**: Total number of entities - let's say 100,000.
+1. **N**: Total number of entities - let's say 1000.
 2. **C**: Component size in bytes (sizeof, assuming align = 8 and the minimum component size is also 8, step - also 8).
 3. **U**: Utilization [0:1] with a step of 0.1 (10%) - what % of all entities have this component, i.e., has value.
 
@@ -249,8 +249,6 @@ The table with calculations and the chart can be viewed here, along with the con
 The vertical axis - component size
 
 The horizontal axis - utilization
-
-Number of entities - `1000`
 
 
 <style>
