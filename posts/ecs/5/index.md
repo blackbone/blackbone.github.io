@@ -249,14 +249,6 @@ public struct Data {
     // there may also be some code processing all this.
 }
 ```
-```
-
-```
-::: warning
-This post has been translated by artificial intelligence and needs proofreading.
-:::
-
-# {{ $frontmatter.title }}
 
 There was a nesting of types, allocations of multiple arrays, the array of blocks itself needed to be initialized, and in general, there was more code.
 
@@ -460,9 +452,6 @@ I wouldn't be myself if I didn't measure which of these is faster.
 | Hybrid | Step20 | 10000000 |    98.116 ms | 1.9292 ms | 1.2760 ms |
 ```
 
-```
-::: warning
-This post has been translated by artificial intelligence and needs proofreading.
 :::
 
 > You can view the code [here](https://github.com/blackbone/ecs/tree/main/bench2).
