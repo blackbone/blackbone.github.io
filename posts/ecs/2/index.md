@@ -13,17 +13,13 @@ prev:
 next: 
   link: '/posts/ecs/3' 
 ---
-::: warning
-This post has been translated by artificial intelligence and needs proofreading.
-:::
-
 # {{ $frontmatter.title }}
 
 Currently, there are quite a few implementations of ECS frameworks, but they can be divided into several main categories.
 
-1. Classic Mustaches - these are where all components of one type are stored in a separate isolated storage, and the Entity is an index to access a cell in this storage (either directly as an index or indirectly through some sparse set).
-2. Trendy Mustaches - these are where the storage of components is based on archetypes, i.e., components are grouped by (conditional) entity type, which is determined by the set of components it owns.
-3. Extravagant Mustaches - this is when components are scattered across the heap, both approaches are used, aspects or some other special non-standard way of handling everything.
+1. Classic ECS - these are where all components of one type are stored in a separate isolated storage, and the Entity is an index to access a cell in this storage (either directly as an index or indirectly through some sparse set).
+2. Trendy ECS - these are where the storage of components is based on archetypes, i.e., components are grouped by (conditional) entity type, which is determined by the set of components it owns.
+3. Extravagant ECS - this is when components are scattered across the heap, both approaches are used, aspects or some other special non-standard way of handling everything.
 
 But let's discuss each in order.
 
@@ -163,7 +159,7 @@ But we will return to this later.
 
 ---
 
-Nevertheless, this is what classic mustaches look like "under the hood", or at least it was intended to be this way.
+Nevertheless, this is what classic ECS look like "under the hood", or at least it was intended to be this way.
 
 ## Archetypal ECS
 
@@ -185,7 +181,7 @@ Why are there two pictures? Because there are also two main approaches to implem
 
 As you can see, there are no holes in either case, and if you calculate a similar layout (by the way, pictures 1 and 2 depict two identical worlds in different ECS paradigms) - it turns out that memory is used much more efficiently.
 
-> For example, in both cases, 33 instances of the component are used (at 4 bytes each, this will be 132 bytes), in classic mustaches, a whole 352 bytes are allocated for this (I did not count the empty 7th component).
+> For example, in both cases, 33 instances of the component are used (at 4 bytes each, this will be 132 bytes), in classic ECS, a whole 352 bytes are allocated for this (I did not count the empty 7th component).
 
 It would seem - the perfect solution, but no - this approach is also not free from problems:
 

@@ -373,7 +373,7 @@ unsafe void ForEach3() {
 
 ::: code-group
 
-```[AoS]
+```csharp[AoS]
 | Type   | Method | Count    | Mean         | Error     | StdDev    |
 |------- |------- |--------- |-------------:|----------:|----------:|
 | AoS    | Step1  | 10000000 |    35.162 ms | 0.2250 ms | 0.1488 ms | // [!code --]
@@ -398,8 +398,7 @@ unsafe void ForEach3() {
 | AoS    | Step20 | 10000000 |    54.774 ms | 0.2482 ms | 0.1298 ms | // [!code ++]
 ```
 
-```[SoA]
-
+```csharp[SoA]
 | Type   | Method | Count    | Mean         | Error     | StdDev    |
 |------- |------- |--------- |-------------:|----------:|----------:|
 | SoA    | Step1  | 10000000 |     6.267 ms | 0.0414 ms | 0.0274 ms | // [!code ++]
@@ -424,7 +423,7 @@ unsafe void ForEach3() {
 | SoA    | Step20 | 10000000 | 2,293.830 ms | 1.6763 ms | 0.9975 ms | // [!code --]
 ```
 
-```[Hybrid]
+```csharp[Hybrid]
 | Type   | Method | Count    | Mean         | Error     | StdDev    |
 |------- |------- |--------- |-------------:|----------:|----------:|
 | Hybrid | Step1  | 10000000 |    30.764 ms | 0.3450 ms | 0.1805 ms |

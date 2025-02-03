@@ -13,10 +13,6 @@ prev:
 next:
   link: '/posts/ecs/2'
 ---
-::: warning
-This post has been translated by artificial intelligence and needs proofreading.
-:::
-
 # {{ $frontmatter.title }}
 
 > A post to summarize information and possibly help beginners understand the basic concepts.
@@ -39,7 +35,7 @@ All ECS stuff is gathered into one heap, and this heap is called the world.
 
 ## World
 
-World (or world) is a high-level abstraction, usually a class, aggregating many entities and systems that modify and manipulate entities within the context of the world.
+World is a high-level abstraction, usually a class, aggregating many entities and systems that modify and manipulate entities within the context of the world.
 
 The world often also has an external API allowing interaction with it from an external context - for example, creating entities upon user or network input.
 
@@ -100,7 +96,7 @@ Filtering is mostly based on the presence or absence of a component, in rare cas
 
 ## System
 
-A system - in canonical ECS, is the logic of data manipulation described (ideally) as a static function taking references to specific components as arguments and not returning any values.
+A system - in canonical ECS, is the logic of data manipulation described (ideally) as a function taking references to specific components as arguments and not returning any values.
 
 > The most interesting thing is that nowhere is it described whose responsibility it is to query entities and push them into systems. Such a design hole, in my opinion.
 > Or maybe not a hole, just such a blurred pattern "store data like this, process it like this, and how you will marry one with the other - we don't really care."
@@ -170,7 +166,7 @@ struct TransformAspect {
 }
 ```
 
-At the same time, from the API point of view, it behaves like a component, you can also make selections, spin in systems, filter.
+At the same time, from the API point of view, it behaves like a component, you can also make selections, use in systems, filter.
 But 'under the hood' it is interpreted as a 'set of components'.
 
 That's all for now, time to pee and sleep. I will stop at each stage in more detail later and examine and measure everything in detail.

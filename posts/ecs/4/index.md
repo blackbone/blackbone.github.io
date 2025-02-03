@@ -14,10 +14,6 @@ next:
 ---
 # {{ $frontmatter.title }}
 
-::: warning
-This post has been translated by artificial intelligence and needs proofreading.
-:::
-
 ## The Essence of the Problem
 
 As I previously wrote [here](/posts/ecs/2/#classic-ecs) - naively using EntityId as an index in component storage is not very efficient, although it is the fastest access method (excluding resizes, of course). Unused occupied memory, in practice, will tend to 100% as the number of entity types grows, and I am not the first to think about this.

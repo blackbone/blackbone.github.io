@@ -12,11 +12,6 @@ prev:
 next:
   link: '/posts/ecs'
 ---
-
-::: warning
-This post has been translated by artificial intelligence and needs proofreading.
-:::
-
 # {{ $frontmatter.title }}
 
 ## Introduction
@@ -259,7 +254,7 @@ It also has some cons:
 
 Iteration follows suit and will look something like this:
 
-> Mini spoiler: after trying different options, including just pointers and a bunch of save and unsave, etc., I settled on this, as it seems the most optimal and clear to me.
+> Mini spoiler: after trying different options, including just pointers and a bunch of safe and unsafe, etc., I settled on this, as it seems the most optimal and clear to me.
 
 ```csharp
 unsafe void ForEach1()
@@ -376,7 +371,7 @@ I wouldn't be myself if I didn't measure which of these is faster.
 
 ::: code-group
 
-```[AoS]
+```csharp[AoS]
 | Type   | Method | Count    | Mean         | Error     | StdDev    |
 |------- |------- |--------- |-------------:|----------:|----------:|
 | AoS    | Step1  | 10000000 |    35.162 ms | 0.2250 ms | 0.1488 ms | // [!code --]
@@ -401,8 +396,7 @@ I wouldn't be myself if I didn't measure which of these is faster.
 | AoS    | Step20 | 10000000 |    54.774 ms | 0.2482 ms | 0.1298 ms | // [!code ++]
 ```
 
-```[SoA]
-
+```csharp[SoA]
 | Type   | Method | Count    | Mean         | Error     | StdDev    |
 |------- |------- |--------- |-------------:|----------:|----------:|
 | SoA    | Step1  | 10000000 |     6.267 ms | 0.0414 ms | 0.0274 ms | // [!code ++]
@@ -427,7 +421,7 @@ I wouldn't be myself if I didn't measure which of these is faster.
 | SoA    | Step20 | 10000000 | 2,293.830 ms | 1.6763 ms | 0.9975 ms | // [!code --]
 ```
 
-```[Hybrid]
+```csharp[Hybrid]
 | Type   | Method | Count    | Mean         | Error     | StdDev    |
 |------- |------- |--------- |-------------:|----------:|----------:|
 | Hybrid | Step1  | 10000000 |    30.764 ms | 0.3450 ms | 0.1805 ms |
