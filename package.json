@@ -11,7 +11,7 @@
     "gray-matter": "^4.0.3",
     "tailwindcss": "^3.4.17",
     "vitepress": "^1.6.3",
-    "vitepress-sidebar": "^1.30.2",
+    "vitepress-sidebar": "^1.31.1",
     "vue": "^3.4.21"
   },
   "scripts": {

@@ -2,7 +2,6 @@
     --vp-c-brand-1: #626262;
     --vp-c-brand-2: #507dae;
 
-
     /* logo colors */ 
     --vp-home-hero-name-color: transparent;
     --vp-home-hero-name-background: -webkit-linear-gradient(120deg, var(--vp-c-brand-1) 30%, var(--vp-c-brand-2));

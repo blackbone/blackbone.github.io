@@ -10,6 +10,7 @@ tags:
 prev:
   link: '/posts/ecs/4'
 next:
+  text: All ECS Posts
   link: '/posts/ecs'
 ---
 # {{ $frontmatter.title }}

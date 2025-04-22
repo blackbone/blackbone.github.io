@@ -15,10 +15,6 @@ prev:
 next:
   link: '/posts/source_generators/2'
 ---
-::: warning
-This post has been translated by artificial intelligence and needs proofreading.
-:::
-
 # {{ $frontmatter.title }}
 
 Source generators in C# are pretty cool, but not everyone knows how to use them effectively.

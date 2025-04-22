@@ -100,18 +100,18 @@ export default defineConfig({
             documentRootPath: '/posts/',
             scanStartPath: '/',
             resolvePath: '/posts/',
-            excludeFiles: ['/posts/index.md'],
             excludeFilesByFrontmatterFieldName: "draft",
             includeRootIndexFile: false,
             collapseDepth: 1,
-            excludeFolders: [".", "node_modules", "dist", "public", "src", "vitepress", "vitepress-sidebar"],
+            excludePattern: [] //["/posts/index.md", ".", "node_modules", "dist", "public", "src", "vitepress", "vitepress-sidebar"]
           }
         ]),
         // https://vitepress.dev/reference/default-theme-config
         logo: '/logo-dark.png',
         // social links
         socialLinks: [
-          { icon: 'github', link: 'https://github.com/blackbone' }
+          { icon: 'github', link: 'https://github.com/blackbone' },
+          { icon: 'discord', link: 'https://discord.gg/b7uVGfaK' }
         ],
         // footer content
         footer: {
@@ -145,11 +145,10 @@ export default defineConfig({
             documentRootPath: '/ru/posts/',
             scanStartPath: '/',
             resolvePath: '/ru/posts/',
-            excludeFiles: ['/ru/posts/index.md'],
             excludeFilesByFrontmatterFieldName: "draft",
             includeRootIndexFile: false,
             collapseDepth: 1,
-            excludeFolders: [".", "node_modules", "dist", "public", "src", "vitepress", "vitepress-sidebar"],
+            excludePattern: [] //["/posts/index.md", ".", "node_modules", "dist", "public", "src", "vitepress", "vitepress-sidebar"]
           }
         ]),
         // https://vitepress.dev/reference/default-theme-config
@@ -157,7 +156,8 @@ export default defineConfig({
         // social links
         socialLinks: [
           { icon: 'github', link: 'https://github.com/blackbone' },
-          { icon: { svg: tg_svg }, link: 'https://t.me/uprt_rzrbtk'}
+          { icon: { svg: tg_svg }, link: 'https://t.me/uprt_rzrbtk'},
+          { icon: 'discord', link: 'https://discord.gg/b7uVGfaK' }
         ],
         // footer content
         footer: {

@@ -14,10 +14,6 @@ prev:
   link: '/posts/random' 
 next: false
 ---
-::: warning
-This post has been translated by artificial intelligence and needs proofreading.
-:::
-
 # {{ $frontmatter.title }}
 
 While writing [benchmarks](https://github.com/blackbone/other-ecs-benchmarks), I got frustrated several times.

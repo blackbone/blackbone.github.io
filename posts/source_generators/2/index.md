@@ -15,10 +15,6 @@ prev:
 next:
   link: '/posts/source_generators/3'
 ---
-::: warning
-This post has been translated by artificial intelligence and needs proofreading.
-:::
-
 # {{ $frontmatter.title }}
 
 ## Preamble:
