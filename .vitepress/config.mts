@@ -95,7 +95,7 @@ export default defineConfig({
         // social links
         socialLinks: [
           { icon: 'github', link: 'https://github.com/blackbone' },
-          { icon: 'discord', link: 'https://discord.gg/b7uVGfaK' }
+          { icon: 'discord', link: 'https://discord.gg/BN3pYWvrF4' }
         ],
         // footer content
         footer: {

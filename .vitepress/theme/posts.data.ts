@@ -33,7 +33,7 @@ export default createContentLoader(['posts/**/*.md'], {
         title: frontmatter.title,
         url,
         icon: {
-          src: url ? (url.replace('/ru', '') + "logo.jpg") : '/not_found.jpg',
+          src: url ? url + "logo.jpg" : '/not_found.jpg',
           width: "100%",
           height: "100%"
         },
@@ -108,7 +108,7 @@ export function transform(raw: ContentData[]): PostsData {
       title: frontmatter.title,
       url,
       icon: {
-        src: url ? (url.replace('/ru', '') + "logo.jpg") : '/not_found.jpg',
+        src: url ? url + "logo.jpg" : '/not_found.jpg',
         width: "100%",
         height: "100%"
       },
