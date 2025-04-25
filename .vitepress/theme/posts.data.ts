@@ -23,7 +23,7 @@ declare const data: PostsData
 export { data }
 
 // get rid of this and use exported function
-export default createContentLoader(['posts/**/*.md', 'ru/posts/**/*.md'], {
+export default createContentLoader(['posts/**/*.md'], {
   excerpt: true,
   transform(raw): PostsData {
     var posts = raw

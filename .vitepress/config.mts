@@ -26,23 +26,7 @@ const langs = {
       copyright: copyright,
     }),
     feedPath: 'feed.rss'
-  },
-  ru: {
-    id: 'ru-RU',
-    prefix: 'ru/',
-    isRoot: false,
-    feed: new Feed({
-      title: 'Упрт Рзрбтк',
-      description: 'Упоротая, медовая дичь',
-      id: hostname,
-      link: hostname,
-      language: 'ru-RU',
-      image: `${hostname}/logo-dark.png`,
-      favicon: `${hostname}/favicon.ico`,
-      copyright: copyright
-    }),
-    feedPath: 'ru/feed.rss'
-  },
+  }
 }
 
 // https://vitepress.dev/reference/site-config
@@ -122,58 +106,11 @@ export default defineConfig({
           level: [2, 3]
         }
       }
-    },
-    ru: {
-      title: "Упрт Рзрбтк",
-      description: "Личный блог про Unity, DotNet, C# и прочие вещи, такие как ECS, бенчмаркинг, оптимизации, игры и ...",
-      label: 'Русский',
-      lang: 'ru-RU',
-      themeConfig: {
-        // top nav
-        nav: [
-          { text: 'Домой', link: '/ru/' },
-          { text: 'Все посты', link: '/ru/posts' },
-          { text: 'RSS', link: `${hostname}/ru/feed.rss` },
-        ],
-        // sidebar for posts
-        sidebar: generateSidebar([
-          {
-            sortMenusByFrontmatterOrder: true,
-            useFolderLinkFromIndexFile: true,
-            useTitleFromFrontmatter: true,
-            useFolderTitleFromIndexFile: true,
-            documentRootPath: '/ru/posts/',
-            scanStartPath: '/',
-            resolvePath: '/ru/posts/',
-            excludeFilesByFrontmatterFieldName: "draft",
-            includeRootIndexFile: false,
-            collapseDepth: 1,
-            excludePattern: [] //["/posts/index.md", ".", "node_modules", "dist", "public", "src", "vitepress", "vitepress-sidebar"]
-          }
-        ]),
-        // https://vitepress.dev/reference/default-theme-config
-        logo: '/logo-dark.png',
-        // social links
-        socialLinks: [
-          { icon: 'github', link: 'https://github.com/blackbone' },
-          { icon: { svg: tg_svg }, link: 'https://t.me/uprt_rzrbtk'},
-          { icon: 'discord', link: 'https://discord.gg/b7uVGfaK' }
-        ],
-        // footer content
-        footer: {
-          copyright: copyright
-        },
-        outline: {
-          label: 'Содержание',
-          level: [2, 3]
-        }
-      }
     }
   },
   
   buildEnd: async (config: SiteConfig) => {
     await buildRssFeed(config, langs.en.feed, langs.en.id, langs.en.feedPath);
-    await buildRssFeed(config, langs.ru.feed, langs.ru.id, langs.ru.feedPath);
     await generateRobotsTxt(config);
   }
 })
