@@ -10,7 +10,7 @@
     "feed": "^4.2.2",
     "gray-matter": "^4.0.3",
     "tailwindcss": "^3.4.17",
-    "vitepress": "^1.6.3",
+    "vitepress": "^1.6.4",
     "vitepress-sidebar": "^1.31.1",
     "vue": "^3.4.21"
   },
