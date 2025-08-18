@@ -3,7 +3,7 @@ layout: doc
 lang: en-US
 title: How I Set Up SG for Unity
 description: Source generators in C# are pretty cool, but not everyone knows how to properly cook them.
-logo: /posts/source_generators/1/logo.jpg
+logo: /posts/source-generators/1/logo.jpg
 date: 2024-04-07 01:00:00
 tags:
   - dotnet
@@ -11,9 +11,9 @@ tags:
   - unity
   - ai-translated
 prev:
-  link: '/posts/source_generators/'
+  link: '/posts/source-generators/'
 next:
-  link: '/posts/source_generators/2'
+  link: '/posts/source-generators/2'
 ---
 # {{ $frontmatter.title }}
 

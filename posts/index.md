@@ -13,7 +13,7 @@ import { useData } from 'vitepress'
 
 # {{ $frontmatter.title }}
 
-## [Source Generators in Unity and .NET](/posts/source_generators/)
+## [Source Generators in Unity and .NET](/posts/source-generators/)
 
 A bit of knowledge how to set up and use source generators with Unity.
 

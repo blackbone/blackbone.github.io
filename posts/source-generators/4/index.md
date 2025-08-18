@@ -3,7 +3,7 @@ layout: doc
 lang: en-US
 title: SG Factory
 description: Implementing Source Generator for some complex approach - Factories it this particular case.
-logo: /posts/source_generators/4/logo.jpg
+logo: /posts/source-generators/4/logo.jpg
 date: 2024-05-12 04:00:00
 tags:
   - dotnet
@@ -11,9 +11,9 @@ tags:
   - unity
   - ai-translated
 prev:
-  link: '/posts/source_generators/3'
+  link: '/posts/source-generators/3'
 next:
-  link: '/posts/source_generators/'
+  link: '/posts/source-generators/'
 ---
 # {{ $frontmatter.title }}
 

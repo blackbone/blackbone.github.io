@@ -64,7 +64,7 @@ export default defineConfig({
   locales: {
     root:  {
       title: "Uprt Dev",
-      description: "Personal blog about Unity, DotNet, C# and other stuff such as ECS, benchmarking, optimization, games and ...",
+      description: "Personal blog about Unity, DotNet, C# and other stuff such as ECS, benchmarking, optimization, games, AI, LLMs, business and moreover.",
       label: 'English',
       lang: 'en-US',
       themeConfig: {

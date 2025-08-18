@@ -3,7 +3,7 @@ layout: doc
 lang: en-US
 title: Additional files in SG for Unity
 description: Implementing simple enum generator to highlight how to work with additional files in Unity context.
-logo: /posts/source_generators/3/logo.jpg
+logo: /posts/source-generators/3/logo.jpg
 date: 2024-04-07 03:00:00
 tags:
   - dotnet
@@ -11,9 +11,9 @@ tags:
   - unity
   - ai-translated
 prev:
-  link: '/posts/source_generators/2'
+  link: '/posts/source-generators/2'
 next:
-  link: '/posts/source_generators/4'
+  link: '/posts/source-generators/4'
 ---
 # {{ $frontmatter.title }}
 
