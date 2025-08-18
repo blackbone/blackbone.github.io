@@ -65,6 +65,17 @@
 (function(){
   'use strict';
   const RAW_URL = 'https://gist.githubusercontent.com/blackbone/6d254a684cf580441bf58690ad9485c3/raw/report.md';
+  function cacheBust(u){
+    try{
+      const url = new URL(u);
+      url.searchParams.set('_', Date.now().toString());
+      return url.toString();
+    }catch{
+      // fallback if URL constructor fails
+      const sep = u.includes('?') ? '&' : '?';
+      return u + sep + '_=' + Date.now();
+    }
+  }
 
   /*** utils ***/
   const trim = s=> (s||'').trim();
@@ -375,7 +386,8 @@
         qsIgnoreSet = new Set(ignoreParam.split(',').map(s=>s.trim()).filter(Boolean));
       }
       meta.innerHTML = 'Source: <a href="https://github.com/blackbone/other-ecs-benchmarks" target="_blank" rel="noreferrer">github.com/blackbone/other-ecs-benchmarks</a>';
-      const res = await fetch(RAW_URL, {cache:'no-cache'}); if(!res.ok) throw new Error('HTTP '+res.status);
+      const res = await fetch(cacheBust(RAW_URL), {cache:'no-store'});
+      if(!res.ok) throw new Error('HTTP '+res.status);
       const md = await res.text(); benches = parseReport(md);
       // fill selector
       /*
