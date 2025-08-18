@@ -1,0 +1,18 @@
+# uprt.dev llms.txt
+
+- [Uprt Dev | Fresh, sweet development cringe](https://uprt.dev/): A personal blog focused on Unity, DotNet, C#, and related topics such as ECS, benchmarking, optimization, and game development.
+- [1.1 Theory One (or ECS for Dummies) | Uprt Dev](https://uprt.dev/posts/ecs/1/): An introduction to the Entity Component System (ECS) software architectural pattern in simple terms.
+- [1.2 Theory Two: Types of Mustaches | Uprt Dev](https://uprt.dev/posts/ecs/2/): An overview of the different types of ECS (Entity-Component-System) frameworks and their categorization.
+- [1.3 Healing Entities | Uprt Dev](https://uprt.dev/posts/ecs/3/): This page discusses adding healing entities to an ECS system, focusing on protection and foolproof checks at the API level.
+- [1.4 Optimizing Components | Uprt Dev](https://uprt.dev/posts/ecs/4/): This page discusses efficient storage of components in ECS (Entity-Component-System) architecture.
+- [1.5 AoS vs SoA | Uprt Dev](https://uprt.dev/posts/ecs/5/): This page compares and explains the differences between Array of Structures (AoS) and Struct of Arrays (SoA) approaches in the context of Entity Component System (ECS) architecture.
+- [ECS Posts | Uprt Dev](https://uprt.dev/posts/ecs/): Posts related to the Entity Component System (ECS) architecture.
+- [All posts | Uprt Dev](https://uprt.dev/posts/): A personal blog covering Unity, DotNet, C#, and other topics such as ECS, benchmarking, and AI.
+- [Post Title | Uprt Dev](https://uprt.dev/posts/post.draft): This webpage appears to be a draft or a collection of posts related to source generators in Unity, possibly including setup and usage guides.
+- [Pre-Preamble | Uprt Dev](https://uprt.dev/posts/random/1/): A developer's account of frustration with ECS (Entity Component System) while writing benchmarks, citing API inconsistency as a primary issue.
+- [Random posts | Uprt Dev](https://uprt.dev/posts/random/): A collection of random posts on various topics.
+- [How I Set Up SG for Unity | Uprt Dev](https://uprt.dev/posts/source-generators/1/): A tutorial on setting up source generators in Unity, covering the basics and best practices for effective use.
+- [How to Determine if SG is in Unity | Uprt Dev](https://uprt.dev/posts/source-generators/2/): Determining whether a source generator is being used in the context of Unity to make it reusable across environments.
+- [Additional files in SG for Unity](https://uprt.dev/posts/source-generators/3/): This page explains how to implement source generators in Unity to work with additional files.
+- [SG Factory | Uprt Dev](https://uprt.dev/posts/source-generators/4/): Exploring the implementation of source generators for complex approaches, specifically factoring in metadata to instantiate descendants of an abstract class.
+- [Source Generators in Unity | Uprt Dev](https://uprt.dev/posts/source-generators/): A blog about Unity, DotNet, C#, and other related topics, focusing on source generators, ECS, benchmarking, optimization, and more.
