@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ECS Bench – Mean Chart</title>
+<style>
+  :root{--bg:#0b0c10;--fg:#e5e7eb;--muted:#9ca3af;--card:#111317;--border:#1f2937;--chip:#0f1115}
+  html,body{background:var(--bg);color:var(--fg);margin:0;font:14px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; height:100%}
+  body{display:flex;flex-direction:column}
+  header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  header h1{font-size:16px;margin:0}
+  select{background:#111827;color:var(--fg);border:1px solid #374151;border-radius:8px;padding:6px 10px}
+  .meta{padding:8px 16px;color:var(--muted);border-bottom:1px solid var(--border)}
+  .wrap{padding:16px; flex:1; display:flex; flex-direction:row; min-height:0; gap:16px}
+  .side{width:260px; min-width:220px; max-width:360px; border:1px solid var(--border); border-radius:12px; background:var(--card); display:flex; flex-direction:column; overflow:hidden}
+  .side-header{padding:10px 12px; border-bottom:1px solid var(--border); font-size:13px; color:var(--muted)}
+  .bench-list{overflow:auto; padding:6px}
+  .bench-item{display:block; padding:8px 10px; border-radius:8px; cursor:pointer; user-select:none; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; border:1px solid transparent}
+  .bench-item:hover{background:#0f1115; border-color:#22262d}
+  .bench-item.active{background:#17212b; border-color:#2a3440}
+  .main{flex:1; min-width:0; display:flex; flex-direction:column; min-height:0}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;flex:1;display:flex;flex-direction:column;min-height:0}
+  .card h3{margin:0;padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px}
+  .controls{display:flex;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px dashed var(--border);color:var(--muted)}
+  .fw{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-bottom:1px dashed var(--border)}
+  .fw label{display:inline-flex;align-items:center;gap:8px;background:var(--chip);border:1px solid var(--border);border-radius:10px;padding:6px 10px}
+  .sw{width:10px;height:10px;border-radius:3px;border:1px solid rgba(0,0,0,.35);display:inline-block}
+  canvas{display:block;flex:1 1 auto;width:100%;height:auto;min-height:0}
+  .err{color:#fecaca;padding:12px 16px}
+</style>
+</head>
+<body>
+<header>
+  <h1>ECS Bench → Mean</h1>
+</header>
+<div class="meta" id="meta"></div>
+<div class="wrap">
+  <aside class="side">
+    <div class="side-header">Benches</div>
+    <div id="benchList" class="bench-list" role="listbox" aria-label="Benches"></div>
+  </aside>
+  <main class="main">
+    <div class="card">
+      <h3 id="title">—</h3>
+      <div class="controls" id="controls">Metric: Mean (time)</div>
+      <div class="fw" id="fw"></div>
+      <canvas id="cv"></canvas>
+    </div>
+    <div class="err" id="err" style="display:none"></div>
+  </main>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const RAW_URL = 'https://gist.githubusercontent.com/blackbone/6d254a684cf580441bf58690ad9485c3/raw/report.md';
+
+  /*** utils ***/
+  const trim = s=> (s||'').trim();
+  function splitPipe(line){
+    // remove leading/trailing '|' and split
+    const core = line.replace(/^\|/, '').replace(/\|\s*$/, '');
+    return core.split('|').map(x=>trim(x));
+  }
+  function parseTimeToMicros(s){
+    if (!s) return NaN; const t=s.replace(/,/g,'').trim();
+    const m=t.match(/^([0-9]*\.?[0-9]+)\s*(ns|µs|μs|us|ms|s)$/i); if(!m) return NaN;
+    const v=parseFloat(m[1]); const u=m[2].toLowerCase();
+    if(u==='ns') return v/1000; if(u==='µs'||u==='μs'||u==='us') return v; if(u==='ms') return v*1000; if(u==='s') return v*1_000_000; return NaN;
+  }
+  function parseBytes(s){ if(!s || s==='-' || s.includes('?')) return NaN; const m=s.replace(/,/g,'').match(/^([0-9]+)\s*B$/i); return m? parseInt(m[1],10): NaN; }
+  function fmtMicros(us){ if(!isFinite(us)) return 'n/a'; if(us>=1_000_000) return (us/1_000_000).toFixed(3)+' s'; if(us>=1_000) return (us/1_000).toFixed(3)+' ms'; return us.toFixed(1)+' µs'; }
+
+  /*** parse to: Map<bench, Map<framework, data>> ***/
+  function parseReport(md){
+    const lines = md.split(/\r?\n/);
+    const benches = new Map();
+
+    let i=1;
+    // skip until first header '# '
+    while(i<lines.length && !lines[i].startsWith('# ')) i++;
+
+    while(i<lines.length){
+      if(!lines[i].startsWith('# ')) { i++; continue; }
+
+      const benchName = trim(lines[i].slice(2)); i++; // bench name
+      i++; // empty line
+      const headerRow = splitPipe(lines[i]); i++; // header row
+      i++; // skip the separator row of ---
+
+      const colIdx = {};
+      headerRow.forEach((h,idx)=>{ colIdx[h.toLowerCase()] = idx; });
+      function col(name){ return colIdx[name.toLowerCase()]; }
+
+      const map = new Map();
+      while(i<lines.length && (lines[i]||'').startsWith('|')){
+        const cols = splitPipe(lines[i]); i++;
+        // guard against the separator reappearing
+        if(cols.length && /^-+$/.test(cols[0])) continue;
+        const ctx = cols[col('Context')] ?? cols[col('context')] ?? cols[0];
+        const meanStr = cols[col('Mean')] ?? '';
+        const errStr  = cols[col('Error')] ?? '';
+        const sdStr   = cols[col('StdDev')] ?? '';
+        const medStr  = (col('Median')!=null)? cols[col('Median')] : '';
+        const allocStr= (col('Allocated')!=null)? cols[col('Allocated')] : '';
+        // padding column might be present in some benches
+        const padStr  = (col('Padding')!=null)? cols[col('Padding')] : '';
+
+        const rec = {
+          mean_us: parseTimeToMicros(meanStr),
+          error_us: parseTimeToMicros(errStr),
+          stddev_us: parseTimeToMicros(sdStr),
+          median_us: parseTimeToMicros(medStr),
+          allocated: parseBytes(allocStr),
+          padding: padStr && /^\d+$/.test(padStr) ? parseInt(padStr,10) : NaN,
+        };
+        if (ctx) map.set(trim(ctx), rec);
+      }
+      benches.set(benchName, map);
+
+      // advance to next section header '# '
+      while(i<lines.length && !lines[i].startsWith('# ')) i++;
+    }
+    return benches;
+  }
+
+  /*** color palette per framework ***/
+  function paletteForFrameworks(names){
+    const uniq = [...names].sort();
+    const map = new Map();
+    uniq.forEach((n,idx)=>{ const hue = Math.round(360*idx/Math.max(1,uniq.length)); map.set(n, `hsl(${hue} 70% 55%)`); });
+    return map;
+  }
+
+  /*** render ***/
+  // const benchSel = document.getElementById('benchSel');
+  const benchList = document.getElementById('benchList');
+  const meta = document.getElementById('meta');
+  const title = document.getElementById('title');
+  const fwBox = document.getElementById('fw');
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const errBox = document.getElementById('err');
+
+  let benches = new Map();
+  let fwEnabled = new Set();
+  let colors = new Map();
+  let fwState = new Map(); // framework -> boolean (enabled)
+
+  let currentMap = new Map();
+  let raf = 0;
+  let currentBenchKey = '';
+
+  function syncEnabledFromState(names){
+    fwEnabled.clear();
+    names.forEach(n=>{
+      const v = fwState.has(n) ? fwState.get(n) : true; // default enabled for unseen frameworks
+      if (!fwState.has(n)) fwState.set(n, true);
+      if (v) fwEnabled.add(n);
+    });
+  }
+
+  function resizeCanvas(){
+    const rect = cv.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const w = Math.max(1, Math.floor(rect.width * dpr));
+    // For height, prefer rect.height; if 0 (first layout), fall back to computed style
+    let cssH = rect.height;
+    if (cssH === 0){
+      const cs = getComputedStyle(cv);
+      const ph = parseFloat(cs.paddingTop)||0, pb=parseFloat(cs.paddingBottom)||0;
+      cssH = Math.max(1, cv.parentElement.clientHeight - (ph+pb));
+    }
+    const h = Math.max(1, Math.floor(cssH * dpr));
+    if (cv.width !== w || cv.height !== h){
+      cv.width = w;
+      cv.height = h;
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+  }
+
+  function drawMean(map){
+    currentMap = map;
+    const dpr = window.devicePixelRatio || 1;
+    const W = cv.width / dpr, H = cv.height / dpr;
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const pad={l:70,r:20,t:18,b:60}; const plotW=W-pad.l-pad.r, plotH=H-pad.t-pad.b;
+
+    const data = [...map.entries()].filter(([k,v])=>fwEnabled.has(k) && isFinite(v.mean_us) && v.mean_us>0);
+    if(!data.length){ ctx.fillStyle='#9ca3af'; ctx.fillText('No data', pad.l, pad.t+20); return; }
+
+    const vals = data.map(([,v])=>v.mean_us);
+    const lo = Math.max(0, Math.min(...vals)*0.95), hi = Math.max(...vals)*1.05;
+
+    // grid
+    ctx.strokeStyle='#1f2937'; ctx.lineWidth=1; ctx.fillStyle='#9ca3af'; ctx.font='12px ui-monospace, monospace';
+    const ticks=5; for(let i=0;i<ticks;i++){ const t=lo+(hi-lo)*(i/(ticks-1)); const y=pad.t+(1-(t-lo)/(hi-lo))*plotH; ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke(); ctx.textAlign='right'; ctx.textBaseline='middle'; ctx.fillText(fmtMicros(t), pad.l-6, y); }
+    ctx.strokeStyle='#374151'; ctx.lineWidth=1.5; ctx.strokeRect(pad.l,pad.t,plotW,plotH);
+
+    // bars
+    const gap=8; const barW = Math.max(8, Math.floor((plotW-gap*(data.length+1))/data.length)); let x=pad.l+gap;
+    data.forEach(([name,rec])=>{
+      const y = pad.t + (1 - (rec.mean_us - lo)/(hi - lo)) * plotH; const bh = pad.t + plotH - y;
+      ctx.fillStyle = colors.get(name) || '#60a5fa'; ctx.fillRect(x,y,barW,bh);
+      // label
+      ctx.save(); ctx.translate(x+barW/2, pad.t+plotH+4); ctx.fillStyle='#cbd5e1'; ctx.textAlign='center'; ctx.textBaseline='top'; ctx.font='11px ui-monospace, monospace';
+      const short = name.length>16? name.slice(0,15)+'…' : name; ctx.fillText(short,0,0); ctx.restore();
+      // value
+      ctx.fillStyle='#94a3b8'; ctx.textAlign='center'; ctx.textBaseline='bottom'; ctx.font='11px ui-monospace, monospace'; ctx.fillText(fmtMicros(rec.mean_us), x+barW/2, y-2);
+      x += barW + gap;
+    });
+
+    ctx.fillStyle='#9ca3af'; ctx.font='12px ui-monospace, monospace'; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText('Mean (time)', pad.l, 12);
+  }
+
+  function requestRender(){
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(()=> drawMean(currentMap));
+  }
+
+  function rebuildFW(map){
+    // build toggles; avoid innerHTML with untrusted text
+    fwBox.innerHTML='';
+    const names = [...map.keys()].sort();
+    // if (!fwEnabled.size) names.forEach(n=>fwEnabled.add(n));  <-- removed per instructions
+    colors = paletteForFrameworks(names);
+    names.forEach(n=>{
+      const label=document.createElement('label');
+      const cb=document.createElement('input'); cb.type='checkbox'; cb.checked = fwEnabled.has(n); 
+      cb.addEventListener('change',()=>{
+        fwState.set(n, cb.checked);
+        if(cb.checked) fwEnabled.add(n); else fwEnabled.delete(n);
+        requestRender();
+      });
+      const sw=document.createElement('span'); sw.className='sw'; sw.style.background = colors.get(n);
+      const txt=document.createElement('span'); txt.appendChild(document.createTextNode(n));
+      label.appendChild(cb); label.appendChild(sw); label.appendChild(txt); fwBox.appendChild(label);
+    });
+  }
+
+  /*
+  function onBenchChange(){
+    const key = benchSel.value; const map = benches.get(key) || new Map();
+    title.textContent = key;
+    const names = [...map.keys()].sort();
+    syncEnabledFromState(names);
+    rebuildFW(map);
+    currentMap = map;
+    resizeCanvas();
+    requestRender();
+  }
+  */
+
+  function onBenchChange(key){
+    currentBenchKey = key;
+    const map = benches.get(key) || new Map();
+    title.textContent = key;
+    const names = [...map.keys()].sort();
+    syncEnabledFromState(names);
+    rebuildFW(map);
+    currentMap = map;
+    // update active highlight
+    [...benchList.querySelectorAll('.bench-item')].forEach(el=>{
+      el.classList.toggle('active', el.dataset.key === key);
+      el.setAttribute('aria-selected', el.dataset.key === key ? 'true' : 'false');
+    });
+    resizeCanvas();
+    requestRender();
+  }
+
+  async function boot(){
+    try{
+      errBox.style.display='none'; meta.textContent='Source: '+RAW_URL;
+      const res = await fetch(RAW_URL, {cache:'no-cache'}); if(!res.ok) throw new Error('HTTP '+res.status);
+      const md = await res.text(); benches = parseReport(md);
+      // fill selector
+      /*
+      benchSel.innerHTML = '';
+      [...benches.keys()].forEach((k)=>{ const o=document.createElement('option'); o.value=k; o.textContent=k; benchSel.appendChild(o); });
+      benchSel.addEventListener('change', onBenchChange);
+      onBenchChange();
+      */
+      benchList.innerHTML = '';
+      const keys = [...benches.keys()];
+      keys.forEach((k)=>{
+        const item = document.createElement('div');
+        item.className = 'bench-item';
+        item.dataset.key = k;
+        item.setAttribute('role','option');
+        item.setAttribute('aria-selected','false');
+        item.appendChild(document.createTextNode(k));
+        item.addEventListener('click', ()=> onBenchChange(k));
+        benchList.appendChild(item);
+      });
+      const initial = keys[0] || '';
+      if (initial) onBenchChange(initial);
+
+      window.addEventListener('resize', ()=>{ resizeCanvas(); requestRender(); });
+      resizeCanvas();
+    }catch(e){ errBox.style.display='block'; errBox.textContent='Load/parse error: '+(e?.message||e); }
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>
