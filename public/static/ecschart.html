@@ -23,7 +23,7 @@
   .card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;flex:1;display:flex;flex-direction:column;min-height:0}
   .card h3{margin:0;padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px}
   .controls{display:flex;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px dashed var(--border);color:var(--muted)}
-  .fw{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-bottom:1px dashed var(--border)}
+  .fw{width:100%;display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-bottom:1px dashed var(--border)}
   .fw label{display:inline-flex;align-items:center;gap:8px;background:var(--chip);border:1px solid var(--border);border-radius:10px;padding:6px 10px}
   .sw{width:10px;height:10px;border-radius:3px;border:1px solid rgba(0,0,0,.35);display:inline-block}
   canvas{display:block;flex:1 1 auto;width:100%;height:auto;min-height:0}
@@ -32,7 +32,7 @@
 </head>
 <body>
 <header>
-  <h1>ECS Bench → Mean</h1>
+  <h1>ECS Bench Fancy Charts</h1> <sub>by Uprt Dev</sub>
 </header>
 <div class="meta" id="meta"></div>
 <div class="wrap">
@@ -43,7 +43,17 @@
   <main class="main">
     <div class="card">
       <h3 id="title">—</h3>
-      <div class="controls" id="controls">Metric: Mean (time)</div>
+      <div class="controls" id="controls">
+        <label for="metricSel">Metric</label>
+        <select id="metricSel" title="Metric">
+          <option value="Mean" selected>Mean</option>
+          <option value="Avg">Avg</option>
+          <option value="Err">Err</option>
+          <option value="StdDev">StdDev</option>
+          <option value="Median">Median</option>
+          <option value="Allocated">Allocated</option>
+        </select>
+      </div>
       <div class="fw" id="fw"></div>
       <canvas id="cv"></canvas>
     </div>
@@ -69,8 +79,21 @@
     const v=parseFloat(m[1]); const u=m[2].toLowerCase();
     if(u==='ns') return v/1000; if(u==='µs'||u==='μs'||u==='us') return v; if(u==='ms') return v*1000; if(u==='s') return v*1_000_000; return NaN;
   }
-  function parseBytes(s){ if(!s || s==='-' || s.includes('?')) return NaN; const m=s.replace(/,/g,'').match(/^([0-9]+)\s*B$/i); return m? parseInt(m[1],10): NaN; }
+  function parseBytes(s){
+    if (!s) return NaN;
+    const t = s.replace(/,/g,'').trim();
+    if (t === '-' || t === '–' || t === '—' || /^0\s*(B)?$/i.test(t)) return 0;
+    if (t.includes('?')) return 0; // treat unknown as zero for charting
+    const m = t.match(/^([0-9]+)\s*B$/i);
+    return m ? parseInt(m[1],10) : NaN;
+  }
   function fmtMicros(us){ if(!isFinite(us)) return 'n/a'; if(us>=1_000_000) return (us/1_000_000).toFixed(3)+' s'; if(us>=1_000) return (us/1_000).toFixed(3)+' ms'; return us.toFixed(1)+' µs'; }
+
+  function stripContext(name){
+    return (name||'').replace(/Context$/,'');
+  }
+  function getQS(){ return new URLSearchParams(location.search); }
+  function setQS(params){ const url = location.pathname + '?' + params.toString(); history.replaceState(null,'',url); }
 
   /*** parse to: Map<bench, Map<framework, data>> ***/
   function parseReport(md){
@@ -103,9 +126,9 @@
         const errStr  = cols[col('Error')] ?? '';
         const sdStr   = cols[col('StdDev')] ?? '';
         const medStr  = (col('Median')!=null)? cols[col('Median')] : '';
-        const allocStr= (col('Allocated')!=null)? cols[col('Allocated')] : '';
+        const allocStr= (col('Allocated')!=null)? cols[col('Allocated')] : '0 B';
         // padding column might be present in some benches
-        const padStr  = (col('Padding')!=null)? cols[col('Padding')] : '';
+        const padStr  = (col('Padding')!=null)? cols[col('Padding')] : '0';
 
         const rec = {
           mean_us: parseTimeToMicros(meanStr),
@@ -142,6 +165,8 @@
   const cv = document.getElementById('cv');
   const ctx = cv.getContext('2d');
   const errBox = document.getElementById('err');
+  const metricSel = document.getElementById('metricSel');
+  const controlsBox = document.getElementById('controls');
 
   let benches = new Map();
   let fwEnabled = new Set();
@@ -151,6 +176,11 @@
   let currentMap = new Map();
   let raf = 0;
   let currentBenchKey = '';
+  let currentMetricKey = 'Mean';
+
+  let qsBench = '';
+  let qsMetric = '';
+  let qsIgnoreSet = null; // Set of stripped names from ?ignorectx=
 
   function syncEnabledFromState(names){
     fwEnabled.clear();
@@ -180,43 +210,95 @@
     }
   }
 
-  function drawMean(map){
+  const METRICS = {
+    Mean:     { label: 'Mean (time)',     get: r => r.mean_us,   isBytes:false },
+    Avg:      { label: 'Avg (time)',      get: r => r.mean_us,   isBytes:false }, // alias of Mean
+    Err:      { label: 'Error (time)',    get: r => r.error_us,  isBytes:false },
+    StdDev:   { label: 'StdDev (time)',   get: r => r.stddev_us, isBytes:false },
+    Median:   { label: 'Median (time)',   get: r => r.median_us, isBytes:false },
+    Allocated:{ label: 'Allocated (bytes)',get: r => r.allocated,isBytes:true  },
+  };
+
+  function formatBytes(b){
+    if(!isFinite(b)) return 'n/a';
+    if(b>=1_000_000) return (b/1_000_000).toFixed(2)+' MB';
+    if(b>=1_000) return (b/1_000).toFixed(2)+' KB';
+    return b+' B';
+  }
+
+  function drawChart(map, metricKey){
     currentMap = map;
+    const spec = METRICS[metricKey] || METRICS.Mean;
     const dpr = window.devicePixelRatio || 1;
     const W = cv.width / dpr, H = cv.height / dpr;
     ctx.clearRect(0,0,cv.width,cv.height);
     const pad={l:70,r:20,t:18,b:60}; const plotW=W-pad.l-pad.r, plotH=H-pad.t-pad.b;
 
-    const data = [...map.entries()].filter(([k,v])=>fwEnabled.has(k) && isFinite(v.mean_us) && v.mean_us>0);
+    const rows = [...map.entries()];
+    const data = rows
+      .map(([k,v])=>({name:k, val: spec.get(v)}))
+      .filter(d=>fwEnabled.has(d.name) && isFinite(d.val) && d.val>=0);
     if(!data.length){ ctx.fillStyle='#9ca3af'; ctx.fillText('No data', pad.l, pad.t+20); return; }
 
-    const vals = data.map(([,v])=>v.mean_us);
-    const lo = Math.max(0, Math.min(...vals)*0.95), hi = Math.max(...vals)*1.05;
+    const vals = data.map(d=>d.val);
+    // Стартуем с 0 для читабельности; верхнюю границу слегка расширяем.
+    // Если все нули — делаем hi = 1, чтобы избежать zero-range.
+    let hi = Math.max(...vals);
+    if (!isFinite(hi)) hi = 0;
+    if (hi === 0) hi = 1;
+    const lo = 0;
 
     // grid
     ctx.strokeStyle='#1f2937'; ctx.lineWidth=1; ctx.fillStyle='#9ca3af'; ctx.font='12px ui-monospace, monospace';
-    const ticks=5; for(let i=0;i<ticks;i++){ const t=lo+(hi-lo)*(i/(ticks-1)); const y=pad.t+(1-(t-lo)/(hi-lo))*plotH; ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke(); ctx.textAlign='right'; ctx.textBaseline='middle'; ctx.fillText(fmtMicros(t), pad.l-6, y); }
+    const ticks=5; for(let i=0;i<ticks;i++){
+      const t=lo+(hi-lo)*(i/(ticks-1));
+      const y=pad.t+(1-(t-lo)/(hi-lo))*plotH;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
+      ctx.textAlign='right'; ctx.textBaseline='middle';
+      ctx.fillText(spec.isBytes? formatBytes(t): fmtMicros(t), pad.l-6, y);
+    }
     ctx.strokeStyle='#374151'; ctx.lineWidth=1.5; ctx.strokeRect(pad.l,pad.t,plotW,plotH);
 
     // bars
     const gap=8; const barW = Math.max(8, Math.floor((plotW-gap*(data.length+1))/data.length)); let x=pad.l+gap;
-    data.forEach(([name,rec])=>{
-      const y = pad.t + (1 - (rec.mean_us - lo)/(hi - lo)) * plotH; const bh = pad.t + plotH - y;
-      ctx.fillStyle = colors.get(name) || '#60a5fa'; ctx.fillRect(x,y,barW,bh);
+    data.forEach(d=>{
+      const y = pad.t + (1 - (d.val - lo)/(hi - lo)) * plotH; const bh = pad.t + plotH - y;
+      let drawY = y, drawH = bh;
+      const minH = 2; // px
+      if (drawH < minH) { drawH = minH; drawY = pad.t + plotH - drawH; }
+      ctx.fillStyle = colors.get(d.name) || '#60a5fa';
+      ctx.fillRect(x, drawY, barW, drawH);
       // label
       ctx.save(); ctx.translate(x+barW/2, pad.t+plotH+4); ctx.fillStyle='#cbd5e1'; ctx.textAlign='center'; ctx.textBaseline='top'; ctx.font='11px ui-monospace, monospace';
-      const short = name.length>16? name.slice(0,15)+'…' : name; ctx.fillText(short,0,0); ctx.restore();
+      const disp = stripContext(d.name);
+      const short = disp.length>16? disp.slice(0,15)+'…' : disp; ctx.fillText(short,0,0); ctx.restore();
       // value
-      ctx.fillStyle='#94a3b8'; ctx.textAlign='center'; ctx.textBaseline='bottom'; ctx.font='11px ui-monospace, monospace'; ctx.fillText(fmtMicros(rec.mean_us), x+barW/2, y-2);
+      ctx.fillStyle='#94a3b8'; ctx.textAlign='center'; ctx.textBaseline='bottom'; ctx.font='11px ui-monospace, monospace'; ctx.fillText(spec.isBytes? formatBytes(d.val) : fmtMicros(d.val), x+barW/2, y-2);
       x += barW + gap;
     });
 
-    ctx.fillStyle='#9ca3af'; ctx.font='12px ui-monospace, monospace'; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText('Mean (time)', pad.l, 12);
+    ctx.fillStyle='#9ca3af'; ctx.font='12px ui-monospace, monospace'; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText(spec.label, pad.l, 12);
   }
 
   function requestRender(){
     cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(()=> drawMean(currentMap));
+    raf = requestAnimationFrame(()=> drawChart(currentMap, currentMetricKey));
+  }
+
+  function updateQueryFromState(){
+    if (!currentBenchKey) return;
+    const qs = getQS();
+    qs.set('bench', currentBenchKey);
+    qs.set('metric', currentMetricKey);
+
+    // считаем disabled только по текущему бенчу
+    const allNames   = [...currentMap.keys()];
+    const allShorts  = allNames.map(n => stripContext(n));
+    const enabledShorts = [...fwEnabled].map(n => stripContext(n));
+
+    const disabledShorts = allShorts.filter(n => !enabledShorts.includes(n)).sort();
+    qs.set('ignorectx', disabledShorts.join(','));
+    setQS(qs);
   }
 
   function rebuildFW(map){
@@ -232,9 +314,10 @@
         fwState.set(n, cb.checked);
         if(cb.checked) fwEnabled.add(n); else fwEnabled.delete(n);
         requestRender();
+        updateQueryFromState();
       });
       const sw=document.createElement('span'); sw.className='sw'; sw.style.background = colors.get(n);
-      const txt=document.createElement('span'); txt.appendChild(document.createTextNode(n));
+      const txt=document.createElement('span'); txt.appendChild(document.createTextNode(stripContext(n)));
       label.appendChild(cb); label.appendChild(sw); label.appendChild(txt); fwBox.appendChild(label);
     });
   }
@@ -257,21 +340,41 @@
     const map = benches.get(key) || new Map();
     title.textContent = key;
     const names = [...map.keys()].sort();
+
+    // If query specified contexts to ignore, apply them on first time we open a bench
+    if (qsIgnoreSet){
+      names.forEach(n=>{
+        const short = stripContext(n);
+        const enabled = !qsIgnoreSet.has(short);
+        fwState.set(n, enabled);
+      });
+    }
     syncEnabledFromState(names);
     rebuildFW(map);
     currentMap = map;
+
     // update active highlight
     [...benchList.querySelectorAll('.bench-item')].forEach(el=>{
       el.classList.toggle('active', el.dataset.key === key);
       el.setAttribute('aria-selected', el.dataset.key === key ? 'true' : 'false');
     });
     resizeCanvas();
+    // controlsBox.textContent = 'Metric: ' + (METRICS[currentMetricKey]||METRICS.Mean).label;
     requestRender();
+    updateQueryFromState();
   }
 
   async function boot(){
     try{
-      errBox.style.display='none'; meta.textContent='Source: '+RAW_URL;
+      errBox.style.display='none';
+      const qs = getQS();
+      qsBench = qs.get('bench') || '';
+      qsMetric = qs.get('metric') || '';
+      const ignoreParam = qs.get('ignorectx');
+      if (ignoreParam){
+        qsIgnoreSet = new Set(ignoreParam.split(',').map(s=>s.trim()).filter(Boolean));
+      }
+      meta.innerHTML = 'Source: <a href="https://github.com/blackbone/other-ecs-benchmarks" target="_blank" rel="noreferrer">github.com/blackbone/other-ecs-benchmarks</a>';
       const res = await fetch(RAW_URL, {cache:'no-cache'}); if(!res.ok) throw new Error('HTTP '+res.status);
       const md = await res.text(); benches = parseReport(md);
       // fill selector
@@ -281,8 +384,8 @@
       benchSel.addEventListener('change', onBenchChange);
       onBenchChange();
       */
-      benchList.innerHTML = '';
       const keys = [...benches.keys()];
+      benchList.innerHTML = '';
       keys.forEach((k)=>{
         const item = document.createElement('div');
         item.className = 'bench-item';
@@ -293,10 +396,20 @@
         item.addEventListener('click', ()=> onBenchChange(k));
         benchList.appendChild(item);
       });
-      const initial = keys[0] || '';
+      if (qsMetric && METRICS[qsMetric]) {
+        currentMetricKey = qsMetric;
+        metricSel.value = qsMetric;
+      }
+      const initial = qsBench && keys.includes(qsBench) ? qsBench : (keys[0] || '');
       if (initial) onBenchChange(initial);
 
       window.addEventListener('resize', ()=>{ resizeCanvas(); requestRender(); });
+      metricSel.addEventListener('change', ()=>{
+        currentMetricKey = metricSel.value || 'Mean';
+        // controlsBox.textContent = 'Metric: ' + (METRICS[currentMetricKey]||METRICS.Mean).label;
+        requestRender();
+        updateQueryFromState();
+      });
       resizeCanvas();
     }catch(e){ errBox.style.display='block'; errBox.textContent='Load/parse error: '+(e?.message||e); }
   }
