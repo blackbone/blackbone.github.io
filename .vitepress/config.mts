@@ -49,6 +49,17 @@ export default defineConfig({
 
     return head
   },
+  transformPageData:  (pageData) => {
+    const canonicalUrl = `https://uprt.dev/${pageData.relativePath}`
+      .replace(/index\.md$/, '')
+      .replace(/\.md$/, '.html')
+
+    pageData.frontmatter.head ??= []
+    pageData.frontmatter.head.push([
+      'link',
+      { rel: 'canonical', href: canonicalUrl }
+    ])
+  },
 
   cleanUrls: true,
   sitemap: {
