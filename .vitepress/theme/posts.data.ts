@@ -109,6 +109,7 @@ export function transform(raw: ContentData[]): PostsData {
       url,
       icon: {
         src: url ? url + "logo.jpg" : '/not_found.jpg',
+        alt: url ? url + "logo.jpg" : '/not_found.jpg',
         width: "100%",
         height: "100%"
       },

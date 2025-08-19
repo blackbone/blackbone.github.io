@@ -13,8 +13,7 @@ const props = defineProps<{
 const filteredPosts = computed(() => filterPosts(postsData.posts, props.tags, props.limit, props.lang));
 const { lang } = useData()
 const readFull: Record<string, string> = {
-    'en-US': "Continue reading...",
-    'ru-RU': "Читать далее..."
+    'en-US': "Continue reading..."
 } // much nicer syntax for initialization.
 
 function filterPosts(posts:Post[], tags?:string[], limit?:number, lang?:string): Post[] {
