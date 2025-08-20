@@ -159,12 +159,76 @@
     return benches;
   }
 
+  // === Color spec: string -> solid color; array -> gradient stops; object -> pattern ===
+  const COLOR_SPEC = {
+    // Examples: feel free to tweak by hand
+    LeoEcsContext: '#ddc43c',
+    DefaultECSContext: '#3cdddd',
+    MorpehContext: ['#E40303','#FF8C00','#FFED00','#008026','#24408E','#732982'], // horizontal stripes (top→bottom)
+  };
+
   /*** color palette per framework ***/
   function paletteForFrameworks(names){
     const uniq = [...names].sort();
     const map = new Map();
-    uniq.forEach((n,idx)=>{ const hue = Math.round(360*idx/Math.max(1,uniq.length)); map.set(n, `hsl(${hue} 70% 55%)`); });
+    uniq.forEach((n,idx)=>{
+      const spec = COLOR_SPEC[n];
+      if (spec){
+        map.set(n, spec); // string or array
+      } else {
+        const hue = Math.round(360*idx/Math.max(1,uniq.length));
+        map.set(n, `hsl(${hue} 70% 55%)`);
+      }
+    });
     return map;
+  }
+
+  // Helper to create horizontal stripes pattern
+  function makeStripePattern(ctx, colors, size){
+    const h = Math.max(2, size|0 || 6); // stripe height in px
+    const w = 16; // small tile width; not important for horizontal stripes
+    const off = document.createElement('canvas');
+    off.width = w; off.height = h*2;
+    const g = off.getContext('2d');
+    g.fillStyle = colors[0] || '#6b7280';
+    g.fillRect(0, 0, w, h);
+    g.fillStyle = colors[1] || '#374151';
+    g.fillRect(0, h, w, h);
+    return ctx.createPattern(off, 'repeat');
+  }
+
+  // Accepts: solid (string) or pattern object (reserved). Arrays are handled in draw loop as horizontal stripes.
+  function makeBarFill(ctx, spec, x, y, w, h){
+    if (!spec) return '#60a5fa';
+    if (typeof spec === 'object' && !Array.isArray(spec)){
+      if (spec.type === 'stripes'){
+        // legacy path: two-color repeating stripes
+        return makeStripePattern(ctx, spec.colors||[], spec.size||6);
+      }
+    }
+    return spec; // solid color string
+  }
+
+  // Legend swatch: solid, array (striped bands), or stripes (CSS)
+  function cssBackground(spec){
+    if (Array.isArray(spec)){
+      const n = spec.length;
+      if (n === 1) return spec[0];
+      const stops = [];
+      for (let i=0;i<n;i++){
+        const p0 = (i/n*100).toFixed(2)+'%';
+        const p1 = ((i+1)/n*100).toFixed(2)+'%';
+        stops.push(`${spec[i]} ${p0} ${p1}`);
+      }
+      return `linear-gradient(180deg, ${stops.join(',')})`;
+    }
+    if (typeof spec === 'object' && spec.type === 'stripes'){
+      const c0 = (spec.colors && spec.colors[0]) || '#6b7280';
+      const c1 = (spec.colors && spec.colors[1]) || '#374151';
+      const sz = Math.max(2, spec.size|0 || 6);
+      return `repeating-linear-gradient(180deg, ${c0} 0 ${sz}px, ${c1} ${sz}px ${sz*2}px)`;
+    }
+    return spec;
   }
 
   /*** render ***/
@@ -277,8 +341,19 @@
       let drawY = y, drawH = bh;
       const minH = 2; // px
       if (drawH < minH) { drawH = minH; drawY = pad.t + plotH - drawH; }
-      ctx.fillStyle = colors.get(d.name) || '#60a5fa';
-      ctx.fillRect(x, drawY, barW, drawH);
+      const pal = colors.get(d.name);
+      if (Array.isArray(pal)){
+        const n = Math.max(1, pal.length);
+        for (let i=0;i<n;i++){
+          const ty = drawY + (drawH * i)/n;
+          const th = drawH / n;
+          ctx.fillStyle = pal[i % n];
+          ctx.fillRect(x, ty, barW, th);
+        }
+      } else {
+        ctx.fillStyle = makeBarFill(ctx, pal, x, drawY, barW, drawH);
+        ctx.fillRect(x, drawY, barW, drawH);
+      }
       // label
       ctx.save(); ctx.translate(x+barW/2, pad.t+plotH+4); ctx.fillStyle='#cbd5e1'; ctx.textAlign='center'; ctx.textBaseline='top'; ctx.font='11px ui-monospace, monospace';
       const disp = stripContext(d.name);
@@ -316,7 +391,6 @@
     // build toggles; avoid innerHTML with untrusted text
     fwBox.innerHTML='';
     const names = [...map.keys()].sort();
-    // if (!fwEnabled.size) names.forEach(n=>fwEnabled.add(n));  <-- removed per instructions
     colors = paletteForFrameworks(names);
     names.forEach(n=>{
       const label=document.createElement('label');
@@ -327,7 +401,22 @@
         requestRender();
         updateQueryFromState();
       });
-      const sw=document.createElement('span'); sw.className='sw'; sw.style.background = colors.get(n);
+      const sw=document.createElement('span'); sw.className='sw';
+      const palSpec = colors.get(n);
+      if (Array.isArray(palSpec)){
+        // build a hard-stop vertical gradient with equal bands top→bottom
+        const nst = palSpec.length;
+        const stops = [];
+        for (let i=0;i<nst;i++){
+          const p0 = (i/nst*100).toFixed(2)+'%';
+          const p1 = ((i+1)/nst*100).toFixed(2)+'%';
+          const c = palSpec[i];
+          stops.push(`${c} ${p0} ${p1}`);
+        }
+        sw.style.background = `linear-gradient(180deg, ${stops.join(',')})`;
+      } else {
+        sw.style.background = cssBackground(palSpec);
+      }
       const txt=document.createElement('span'); txt.appendChild(document.createTextNode(stripContext(n)));
       label.appendChild(cb); label.appendChild(sw); label.appendChild(txt); fwBox.appendChild(label);
     });
